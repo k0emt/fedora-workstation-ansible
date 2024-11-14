@@ -1,0 +1,10 @@
+---
+# tasks for power user role
+- name: Install power user packages
+  dnf:
+    name:
+      - btop
+      - htop
+      - vim
+      - tmux
+    state: present

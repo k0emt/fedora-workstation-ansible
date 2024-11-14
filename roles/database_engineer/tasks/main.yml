@@ -1,0 +1,9 @@
+---
+# tasks for database engineer role
+# probably wouldn't install any of the servers, but rather use them in podman containers
+# I do however, want the client software for postgresql, mysql, redis, and mongodb (like mongosh)
+
+- name: Install database client software
+  dnf:
+    name:
+      - mongosh
