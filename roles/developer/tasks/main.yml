@@ -9,3 +9,36 @@
       - python3
       - python3-pip
     state: present
+
+- name: Install node version manager
+  shell: curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.38.0/install.sh | bash
+  args:
+    creates: /home/{{ ansible_user }}/nvm
+
+- name: Install node.js
+  shell: source /home/{{ ansible_user }}/nvm/nvm.sh && nvm install node
+  args:
+    creates: /home/{{ ansible_user }}/.nvm
+
+- name: Install golang
+  shell: curl -o- https://golang.org/dl/go1.17.1.linux-amd64.tar.gz | tar -C /usr/local -xzf -
+  args:
+    creates: /usr/local/go
+
+- name: Install elixir
+  shell: curl -o- https://packages.erlang-solutions.com/erlang-solutions-2.0-1.noarch.rpm | dnf install -y -
+  args:
+    creates: /etc/yum.repos.d/erlang-solutions.repo
+
+- name: Install ruby
+  dnf:
+    name:
+      - ruby
+      - ruby-devel
+    state: present
+
+- name: Install aws cli tools
+  dnf:
+    name:
+      - aws-cli
+    state: present
