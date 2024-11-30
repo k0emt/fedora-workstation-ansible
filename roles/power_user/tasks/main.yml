@@ -4,7 +4,82 @@
   dnf:
     name:
       - btop
+      - bat
+      - curl
+      - eza
+      - fzf
       - htop
-      - vim
+      - jq
+      - mc
+      - neofetch
+      - rsync
+      - tldr
       - tmux
+      - tree
+      - unzip
+      - wget
+      - zip
     state: present
+
+# task to install zsh
+- name: Install zsh
+  dnf:
+    name: zsh
+    state: present
+
+# task to install oh-my-zsh
+- name: Install oh-my-zsh
+  shell: sh -c "$(curl -fsSL https://raw.github.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
+  args:
+    creates: ~/.oh-my-zsh
+
+# task to install Powerlevel10k theme
+- name: Install Powerlevel10k theme
+  git:
+    repo: https://github.com/romkatv/powerlevel10k.git
+    dest: ~/.oh-my-zsh/custom/themes/powerlevel10k
+
+# task to set Powerlevel10k theme in .zshrc
+- name: Set Powerlevel10k theme in .zshrc
+  lineinfile:
+    path: ~/.zshrc
+    regexp: '^ZSH_THEME='
+    line: 'ZSH_THEME="powerlevel10k/powerlevel10k"'
+  notify: reload zsh
+
+# TODO powerlevel 10k configuration
+
+# task to install oh-my-zsh plugins
+- name: Install oh-my-zsh plugins
+  lineinfile:
+    path: ~/.zshrc
+    regexp: '^plugins='
+    line: 'plugins=(git aws web-search base64 zsh-autosuggestions zsh-syntax-highlighting)'
+  notify: reload zsh
+
+# handler to reload zsh configuration
+- name: reload zsh
+  command: zsh -ic "source ~/.zshrc"
+  when: false
+
+# task to set zsh as default shell
+- name: Set zsh as default shell
+  user:
+    name: "{{ ansible_user }}"
+    shell: /bin/zsh
+
+# TODO copy over default .vimrc
+
+# task to enable copr repository for IOSevka font
+- name: Enable copr repository for IOSevka font
+  command: dnf copr enable peterwu/iosevka
+  become: true
+
+# task to install IOSevka fonts
+- name: Install IOSevka fonts
+  dnf:
+      name:
+        - iosevka-fixed-ss04-fonts
+        - iosevka-term-ss04-fonts
+      state: present
+  become: true

@@ -1,0 +1,8 @@
+git_user_name: "Set Your Git User Name"
+git_user_email: "set.your.email@example.com"
+
+# Define the SSH key names
+ssh_keys:
+  - name: github
+  - name: gitlab
+  - name: bitbucket

@@ -3,7 +3,15 @@
 # probably wouldn't install any of the servers, but rather use them in podman containers
 # I do however, want the client software for postgresql, mysql, redis, and mongodb (like mongosh)
 
-- name: Install database client software
+- name: Install database clients and tools
   dnf:
     name:
+      - pgadmin4
+      - mysql-workbench
+      - dbeaver
+      - pgcli
+      - mycli
+      - redis-cli
       - mongosh
+      - mongodb-tools
+    state: present

@@ -1,8 +1,15 @@
 ---
 - hosts: localhost
   become: yes
+
+  vars_files:
+    - git_user_vars.yml
+    - global_vars.yml
+
   roles:
     - power_user
+    - git_user
     - developer
     - ai_researcher
     - database_engineer
+    - app_user

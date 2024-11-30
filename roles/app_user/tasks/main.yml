@@ -1,0 +1,62 @@
+# tasks for installing user applications
+# gimp, inkscape, libreoffice, vlc, and steam
+- name: Install user applications
+  dnf:
+    name:
+      - qrq
+      - openscad
+      - hexchat
+      - kicad
+      - gimp
+      - inkscape
+    state: present
+
+# make sure system has flatpak installed
+- name: Install flatpak
+  dnf:
+    name: flatpak
+    state: present
+
+# flatpack install of Slack
+- name: Install Slack
+  flatpak:
+    name: slack
+    state: present
+
+# flatpack install of Discord
+- name: Install Discord
+  flatpak:
+    name: discord
+    state: present
+
+# task to install Zoom
+- name: Install Zoom
+  dnf:
+    name: https://zoom.us/client/latest/zoom_x86_64.rpm
+    state: present
+
+# task to install Microsoft Edge
+- name: Install Microsoft Edge
+  dnf:
+    name: https://packages.microsoft.com/yumrepos/edge/edge-release.rpm
+    state: present
+
+- name: Ensure Pictures directory exists
+  file:
+    path: ~/Pictures/Wallpapers
+    state: directory
+
+# copy background images from Wallpapers directory to user's Pictures directory
+- name: Copy background images
+  copy:
+    src: ./Wallpapers
+    dest: ~/Pictures/Wallpapers
+    remote_src: yes
+
+# set the background image to the first image in the Wallpapers directory
+- name: Set background image
+  shell: gsettings set org.gnome.desktop.background picture-uri file:///home/{{ ansible_user }}/Pictures/Wallpapers/{{ item }}
+  with_first_found:
+    - "*.jpg"
+    - "*.png"
+  notify: reload gnome

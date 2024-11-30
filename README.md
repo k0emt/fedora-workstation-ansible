@@ -2,7 +2,7 @@
 
 This project contains ansible resources for setting up a new Fedora workstation.
 
-Roles that will be created include: power user, developer, and AI researcher.
+Roles that will be created include: ai_researcher, database_engineer, developer, git_user, power_user
 
 ## Project Structure
 
@@ -11,18 +11,10 @@ fedora-workstation-ansible/
 ├── README.md
 ├── workstation.yml
 └── roles/
-    ├── power_user/
+    ├── role_name/
     │   ├── tasks/
     │   │   └── main.yml
-    ├── developer/
-    │   ├── tasks/
-    │   │   └── main.yml
-    ├── database_engineer/
-    │   ├── tasks/
-    │   │   └── main.yml
-    └── ai_researcher/
-        ├── tasks/
-        │   └── main.yml
+    ...
 ```
 
 ## Initial bootstrap
@@ -40,3 +32,16 @@ To run the playbook on your local workstation, use the following command:
 ```shell
 ansible-playbook -i localhost, -c local workstation.yml
 ```
+
+### Install just one role
+
+Here is an example of how to use ansible to install just one role on your local workstation:
+
+```shell
+ansible-playbook -i localhost, -c local -t power_user workstation.yml
+```
+
+## Developer Information
+
+- [How to test in a WSL2 instance](wsl2-testing.md)
+- [How to test with a container](container.md)

@@ -26,19 +26,75 @@
     creates: /usr/local/go
 
 - name: Install elixir
-  shell: curl -o- https://packages.erlang-solutions.com/erlang-solutions-2.0-1.noarch.rpm | dnf install -y -
-  args:
-    creates: /etc/yum.repos.d/erlang-solutions.repo
-
-- name: Install ruby
   dnf:
     name:
-      - ruby
-      - ruby-devel
+      - erlang
+      - elixir
+      - elixir-doc
+      - erlang-doc
     state: present
+
+# install ruby and rails with rbenv
+- name: Install rbenv
+  dnf:
+    name:
+      - rbenv
+      - ruby-build
+    state: present
+
+# add a line to .zshrc to load rbenv
+- name: Add rbenv to .zshrc
+  lineinfile:
+    path: ~/.zshrc
+    regexp: '^eval "\$\(rbenv init -\)"'
+    line: 'eval "$(rbenv init -)"'
+  notify: reload zsh
+
+# install latest version of ruby with rbenv
+- name: Install ruby
+  shell: rbenv install {{ ruby_version }}
+  args:
+    creates: /home/{{ ansible_user }}/.rbenv/versions/{{ ruby_version }}
+
+# set the global version of ruby to 3.1.2
+- name: Set global ruby version
+  shell: rbenv global 3.1.2
+
+# install rails
+- name: Install rails
+  shell: gem install rails
+  args:
+    creates: /home/{{ ansible_user }}/.rbenv/versions/3.1.2/lib/ruby/gems/3.1.0/gems/rails-
 
 - name: Install aws cli tools
   dnf:
     name:
       - aws-cli
+    state: present
+
+- name: Install podman
+  dnf:
+    name:
+      - podman
+    state: present
+
+- name: Add Microsoft GPG key
+  rpm_key:
+    state: present
+    key: https://packages.microsoft.com/keys/microsoft.asc
+
+- name: Add VS Code repository
+  copy:
+    content: |
+      [code]
+      name=Visual Studio Code
+      baseurl=https://packages.microsoft.com/yumrepos/vscode
+      enabled=1
+      gpgcheck=1
+      gpgkey=https://packages.microsoft.com/keys/microsoft.asc
+    dest: /etc/yum.repos.d/vscode.repo
+
+- name: Install VS Code
+  dnf:
+    name: code
     state: present

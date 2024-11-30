@@ -1,0 +1,67 @@
+---
+# Check if git_user_name is set to "Set Your Git User Name"
+- name: Check Git user name
+  set_fact:
+    prompt_for_git_user_name: "{{ git_user_name == 'Set Your Git User Name' }}"
+
+# Conditionally prompt for Git user name
+- name: Prompt for Git user name
+  vars_prompt:
+    - name: git_user_name
+      prompt: "Enter your Git user name"
+      private: no
+      default: "{{ git_user_name }}"
+  when: prompt_for_git_user_name
+
+# Check if git_user_email is set to "set.your.email@example.com"
+- name: Check Git user email
+  set_fact:
+    prompt_for_git_user_email: "{{ git_user_email == 'set.your.email@example.com' }}"
+
+# Conditionally prompt for Git user email
+- name: Prompt for Git user email
+  vars_prompt:
+    - name: git_user_email
+      prompt: "Enter your Git user email"
+      private: no
+      default: "{{ git_user_email }}"
+  when: prompt_for_git_user_email
+
+# tasks for configuring git
+
+- name: Configure Git user name
+  command: git config --global user.name "{{ git_user_name }}"
+
+- name: Configure Git user email
+  command: git config --global user.email "{{ git_user_email }}"
+
+- name: Set default Git branch to main
+  command: git config --global init.defaultBranch main
+
+- name: Set default merge strategy to rebase
+  command: git config --global pull.rebase true
+
+# copy global-git-ignore.txt to users ~/.gitignore_global
+- name: Copy global git ignore file
+  copy:
+    src: global-git-ignore.txt
+    dest: ~/.gitignore_global
+
+# set the global git ignore file
+- name: Set global git ignore file
+  command: git config --global core.excludesfile ~/.gitignore_global
+
+# set up a directory for git repositories
+- name: Create git projects directory
+  file: path=~/Projects state=directory
+
+# set up a directory for ssh keys
+- name: Create .ssh directory
+  file: path=~/.ssh state=directory
+
+# Loop through the SSH key names and create keys
+- name: Create new ssh keys
+  command: ssh-keygen -t ed25519 -C "{{ item.name }}" -f ~/.ssh/id_ed25519_{{ item.name }} -N ""
+  args:
+    creates: ~/.ssh/id_ed25519_{{ item.name }}
+  loop: "{{ ssh_keys }}"
