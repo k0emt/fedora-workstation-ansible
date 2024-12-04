@@ -10,7 +10,7 @@
     - name: git_user_name
       prompt: "Enter your Git user name"
       private: no
-      default: "{{ git_user_name }}"
+      default: ""
   when: prompt_for_git_user_name
 
 # Check if git_user_email is set to "set.your.email@example.com"
@@ -24,7 +24,7 @@
     - name: git_user_email
       prompt: "Enter your Git user email"
       private: no
-      default: "{{ git_user_email }}"
+      default: ""
   when: prompt_for_git_user_email
 
 # tasks for configuring git

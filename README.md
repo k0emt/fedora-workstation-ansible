@@ -43,5 +43,11 @@ ansible-playbook -i localhost, -c local -t power_user workstation.yml
 
 ## Developer Information
 
+How to do a dry run of the playbook
+
+```shell
+ansible-playbook -i localhost, -c local workstation.yml --check
+```
+
 - [How to test in a WSL2 instance](wsl2-testing.md)
 - [How to test with a container](container.md)
