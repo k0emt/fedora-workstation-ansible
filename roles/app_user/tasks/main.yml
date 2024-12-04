@@ -1,5 +1,5 @@
 # tasks for installing user applications
-# gimp, inkscape, libreoffice, vlc, and steam
+# TODO OBS Studio and OBS Virtual Camera < https://obsproject.com/ >
 - name: Install user applications
   dnf:
     name:
@@ -9,6 +9,9 @@
       - kicad
       - gimp
       - inkscape
+      - krita
+      - thunderbird
+      - audacity
     state: present
 
 # make sure system has flatpak installed

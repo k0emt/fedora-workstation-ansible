@@ -11,7 +11,7 @@
       - htop
       - jq
       - mc
-      - neofetch
+      - fastfetch
       - rsync
       - tldr
       - tmux
@@ -83,3 +83,12 @@
         - iosevka-term-ss04-fonts
       state: present
   become: true
+
+  # copy file static-content/vimrc to users ~/.vimrc
+- name: Copy .vimrc to user's home directory
+  copy:
+    src: static-content/vimrc
+    dest: ~/.vimrc
+    owner: "{{ ansible_user }}"
+    group: "{{ ansible_user }}"
+    mode: 0644
