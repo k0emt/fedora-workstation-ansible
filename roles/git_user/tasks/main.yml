@@ -1,32 +1,4 @@
 ---
-# Check if git_user_name is set to "Set Your Git User Name"
-- name: Check Git user name
-  set_fact:
-    prompt_for_git_user_name: "{{ git_user_name == 'Set Your Git User Name' }}"
-
-# Conditionally prompt for Git user name
-- name: Prompt for Git user name
-  vars_prompt:
-    - name: git_user_name
-      prompt: "Enter your Git user name"
-      private: no
-      default: ""
-  when: prompt_for_git_user_name
-
-# Check if git_user_email is set to "set.your.email@example.com"
-- name: Check Git user email
-  set_fact:
-    prompt_for_git_user_email: "{{ git_user_email == 'set.your.email@example.com' }}"
-
-# Conditionally prompt for Git user email
-- name: Prompt for Git user email
-  vars_prompt:
-    - name: git_user_email
-      prompt: "Enter your Git user email"
-      private: no
-      default: ""
-  when: prompt_for_git_user_email
-
 # tasks for configuring git
 
 - name: Configure Git user name
@@ -45,23 +17,23 @@
 - name: Copy global git ignore file
   copy:
     src: global-git-ignore.txt
-    dest: ~/.gitignore_global
+    dest: "{{ ansible_env.HOME }}/.gitignore_global"
 
 # set the global git ignore file
 - name: Set global git ignore file
-  command: git config --global core.excludesfile ~/.gitignore_global
+  command: git config --global core.excludesfile "{{ ansible_env.HOME }}/.gitignore_global"
 
 # set up a directory for git repositories
 - name: Create git projects directory
-  file: path=~/Projects state=directory
+  file: path="{{ ansible_env.HOME }}/Projects" state=directory
 
 # set up a directory for ssh keys
 - name: Create .ssh directory
-  file: path=~/.ssh state=directory
+  file: path="{{ ansible_env.HOME }}/.ssh" state=directory
 
 # Loop through the SSH key names and create keys
 - name: Create new ssh keys
-  command: ssh-keygen -t ed25519 -C "{{ item.name }}" -f ~/.ssh/id_ed25519_{{ item.name }} -N ""
+  command: ssh-keygen -t ed25519 -C "{{ item.name }}" -f "{{ ansible_env.HOME }}/.ssh/id_ed25519_{{ item.name }}" -N ""
   args:
-    creates: ~/.ssh/id_ed25519_{{ item.name }}
+    creates: "{{ ansible_env.HOME }}/.ssh/id_ed25519_{{ item.name }}"
   loop: "{{ ssh_keys }}"

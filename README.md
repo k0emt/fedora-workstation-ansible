@@ -30,7 +30,7 @@ sudo dnf install ansible
 To run the playbook on your local workstation, use the following command:
 
 ```shell
-ansible-playbook -i localhost, -c local workstation.yml
+ansible-playbook -i localhost, -c local workstation.yml --ask-become-pass
 ```
 
 ### Install just one role
@@ -38,7 +38,7 @@ ansible-playbook -i localhost, -c local workstation.yml
 Here is an example of how to use ansible to install just one role on your local workstation:
 
 ```shell
-ansible-playbook -i localhost, -c local -t power_user workstation.yml
+ansible-playbook -i localhost, -c local -t power_user workstation.yml --ask-become-pass
 ```
 
 ## Developer Information
@@ -46,7 +46,7 @@ ansible-playbook -i localhost, -c local -t power_user workstation.yml
 How to do a dry run of the playbook
 
 ```shell
-ansible-playbook -i localhost, -c local workstation.yml --check
+ansible-playbook -i localhost, -c local workstation.yml --check --ask-become-pass
 ```
 
 - [How to test in a WSL2 instance](wsl2-testing.md)

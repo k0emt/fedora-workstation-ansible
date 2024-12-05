@@ -31,35 +31,35 @@
 - name: Install oh-my-zsh
   shell: sh -c "$(curl -fsSL https://raw.github.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
   args:
-    creates: ~/.oh-my-zsh
+    creates: "{{ ansible_env.HOME }}/.oh-my-zsh"
 
 # task to install Powerlevel10k theme
 - name: Install Powerlevel10k theme
   git:
     repo: https://github.com/romkatv/powerlevel10k.git
-    dest: ~/.oh-my-zsh/custom/themes/powerlevel10k
+    dest: "{{ ansible_env.HOME }}/.oh-my-zsh/custom/themes/powerlevel10k"
 
 # task to set Powerlevel10k theme in .zshrc
 - name: Set Powerlevel10k theme in .zshrc
   lineinfile:
-    path: ~/.zshrc
+    path: "{{ ansible_env.HOME }}/.zshrc"
     regexp: '^ZSH_THEME='
     line: 'ZSH_THEME="powerlevel10k/powerlevel10k"'
   notify: reload zsh
 
-# TODO powerlevel 10k configuration
+# TODO powerlevel 10k configuration?
 
 # task to install oh-my-zsh plugins
 - name: Install oh-my-zsh plugins
   lineinfile:
-    path: ~/.zshrc
+    path: "{{ ansible_env.HOME }}/.zshrc"
     regexp: '^plugins='
     line: 'plugins=(git aws web-search base64 zsh-autosuggestions zsh-syntax-highlighting)'
   notify: reload zsh
 
 # handler to reload zsh configuration
 - name: reload zsh
-  command: zsh -ic "source ~/.zshrc"
+  command: zsh -ic "source {{ ansible_env.HOME }}/.zshrc"
   when: false
 
 # task to set zsh as default shell
@@ -67,8 +67,6 @@
   user:
     name: "{{ ansible_user }}"
     shell: /bin/zsh
-
-# TODO copy over default .vimrc
 
 # task to enable copr repository for IOSevka font
 - name: Enable copr repository for IOSevka font
@@ -88,7 +86,7 @@
 - name: Copy .vimrc to user's home directory
   copy:
     src: static-content/vimrc
-    dest: ~/.vimrc
+    dest: "{{ ansible_env.HOME }}/.vimrc"
     owner: "{{ ansible_user }}"
     group: "{{ ansible_user }}"
     mode: 0644
