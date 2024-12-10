@@ -1,6 +1,7 @@
 ---
 # tasks for power user role
 - name: Install power user packages
+  become: true
   dnf:
     name:
       - btop
@@ -23,6 +24,7 @@
 
 # task to install zsh
 - name: Install zsh
+  become: true
   dnf:
     name: zsh
     state: present

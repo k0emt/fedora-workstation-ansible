@@ -1,6 +1,6 @@
 ---
 - hosts: localhost
-  become: yes
+  become: no
 
   vars_files:
     - git_user_vars.yml
