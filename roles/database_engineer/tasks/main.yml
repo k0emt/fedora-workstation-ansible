@@ -11,8 +11,7 @@
       - pgcli
       - mycli
       - valkey
-      - valkey-docs
-
+      - valkey-doc
     state: present
 
 # TODO add a linked? task file for mongodb

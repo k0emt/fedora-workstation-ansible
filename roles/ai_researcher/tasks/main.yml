@@ -4,19 +4,31 @@
   become: true
   dnf:
     name:
-      - python3
+      - gcc
+      - git
+      - python3-devel
       - python3-pip
     state: present
 
+- name: Upgrade pip
+  become: false
+  pip:
+    name: 
+      - pip
+    extra_args: --upgrade
+
 - name: Install AI Python packages
-  become: true
+  become: false
   pip:
     name:
       - numpy
       - pandas
       - scikit-learn
-      - tensorflow
+      # - tensorflow
       - keras
       - matplotlib
       - ggplot
       - bokeh
+
+# TODO tensorflow ?
+# https://idroot.us/install-tensorflow-fedora-41/

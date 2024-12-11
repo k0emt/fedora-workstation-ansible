@@ -41,6 +41,6 @@
     - git_user
     - power_user
     - app_user
-    # - developer
+    # TODO - developer
     - ai_researcher
     - database_engineer
