@@ -5,67 +5,72 @@
   dnf:
     name:
       - qrq
+      - audacity
       - openscad
-      - hexchat
       - kicad
       - gimp
       - inkscape
       - krita
+      - hexchat
       - thunderbird
-      - audacity
     state: present
 
-# make sure system has flatpak installed
-- name: Install flatpak
-  become: true
-  dnf:
-    name: flatpak
-    state: present
+# TODO: move these tasks to a separate role called communications ?
 
-# flatpack install of Slack
-- name: Install Slack
-  become: true
-  flatpak:
-    name: slack
-    state: present
+# # make sure system has flatpak installed
+# - name: Install flatpak
+#   become: true
+#   dnf:
+#     name: flatpak
+#     state: present
 
-# flatpack install of Discord
-- name: Install Discord
-  become: true
-  flatpak:
-    name: discord
-    state: present
+# # flatpack install of Slack
+# - name: Install Slack
+#   become: true
+#   flatpak:
+#     name: slack
+#     state: present
 
-# task to install Zoom
-- name: Install Zoom
-  become: true
-  dnf:
-    name: https://zoom.us/client/latest/zoom_x86_64.rpm
-    state: present
+# # flatpack install of Discord
+# - name: Install Discord
+#   become: true
+#   flatpak:
+#     name: discord
+#     state: present
 
-# task to install Microsoft Edge
-- name: Install Microsoft Edge
-  become: true
-  dnf:
-    name: https://packages.microsoft.com/yumrepos/edge/edge-release.rpm
-    state: present
+# # task to install Zoom
+# - name: Install Zoom
+#   become: true
+#   dnf:
+#     name: https://zoom.us/client/latest/zoom_x86_64.rpm
+#     state: present
+
+# # task to install Microsoft Edge
+# - name: Install Microsoft Edge
+#   become: true
+#   dnf:
+#     name: https://packages.microsoft.com/yumrepos/edge/edge-release.rpm
+#     state: present
 
 - name: Ensure Pictures directory exists
   file:
-    path: ~/Pictures/Wallpapers
+    path: "{{ home_dir }}/Pictures/Wallpapers"
     state: directory
 
-# copy background images from Wallpapers directory to user's Pictures directory
+# copy background images from project's Wallpapers directory to user's Pictures directory
 - name: Copy background images
   copy:
-    src: ./Wallpapers
-    dest: ~/Pictures/Wallpapers
-    remote_src: yes
+    src: "{{ playbook_dir }}/Wallpapers/"
+    dest: "{{ home_dir }}/Pictures/Wallpapers/"
+    remote_src: no
 
-# set the background image to the first image in the Wallpapers directory
-- name: Set background image
-  shell: gsettings set org.gnome.desktop.background picture-uri file:///home/{{ ansible_user_id }}/Pictures/Wallpapers/{{ item }}
-  with_first_found:
-    - "*.jpg"
-    - "*.png"
+# TODO: set the background image to the first image in the Wallpapers directory
+# - name: Set background image
+#   shell: gsettings set org.gnome.desktop.background picture-uri file://{{ home_dir }}/Pictures/Wallpapers/{{ item }}
+#   with_first_found:
+#     - files:
+#         - "*.jpg"
+#         - "*.png"
+#       paths:
+#         - "{{ home_dir }}/Pictures/Wallpapers/"
   # notify: reload gnome

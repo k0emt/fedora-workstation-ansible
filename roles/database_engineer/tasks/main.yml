@@ -8,11 +8,15 @@
   dnf:
     name:
       - pgadmin4
-      - mysql-workbench
-      - dbeaver
       - pgcli
       - mycli
-      - redis-cli
-      - mongosh
-      - mongodb-tools
+      - valkey
+      - valkey-docs
+
     state: present
+
+# TODO add a linked? task file for mongodb
+# https://idroot.us/install-mongodb-fedora-41/
+
+# TODO install dbeaver
+# https://dbeaver.io/download/

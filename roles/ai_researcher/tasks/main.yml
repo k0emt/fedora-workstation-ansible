@@ -17,3 +17,6 @@
       - scikit-learn
       - tensorflow
       - keras
+      - matplotlib
+      - ggplot
+      - bokeh

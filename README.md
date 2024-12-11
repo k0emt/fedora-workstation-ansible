@@ -35,10 +35,10 @@ ansible-playbook -i localhost, -c local workstation.yml --ask-become-pass
 
 ### Install just one role
 
-Here is an example of how to use ansible to install just one role on your local workstation:
+Here are some examples of how to use ansible to install just one role on your local workstation:
 
 ```shell
-ansible-playbook -i localhost, -c local -t power_user workstation.yml --ask-become-pass
+ansible-playbook -i localhost, -c local -t developer workstation.yml --ask-become-pass
 ```
 
 ## Developer Information

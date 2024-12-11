@@ -38,9 +38,9 @@
       when: prompt_for_git_user_email
 
   roles:
-    - power_user
     - git_user
-    - developer
+    - power_user
+    - app_user
+    # - developer
     - ai_researcher
     - database_engineer
-    - app_user

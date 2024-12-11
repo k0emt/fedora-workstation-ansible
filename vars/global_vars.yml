@@ -1,3 +1,4 @@
 # FILE: global_vars.yml
+home_dir: "{{ lookup('env', 'HOME') | default('/home/root') }}"
 ruby_version: "3.1.2"
 copy_dot_files: true

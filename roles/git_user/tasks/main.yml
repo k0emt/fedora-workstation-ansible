@@ -1,4 +1,13 @@
 ---
+# install git
+
+- name: Install Git
+  become: true
+  dnf:
+    name:
+      - git
+    state: present
+
 # tasks for configuring git
 
 - name: Configure Git user name

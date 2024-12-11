@@ -4,12 +4,13 @@
   become: true
   dnf:
     name:
-      - git
       - gcc
       - make
       - python3
       - python3-pip
     state: present
+
+# TODO get this all working
 
 - name: Install node version manager
   shell: curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.38.0/install.sh | bash
@@ -22,9 +23,11 @@
     creates: /home/{{ ansible_user_id }}/.nvm
 
 - name: Install golang
-  shell: curl -o- https://golang.org/dl/go1.17.1.linux-amd64.tar.gz | tar -C /usr/local -xzf -
-  args:
-    creates: /usr/local/go
+  become: true
+  dnf:
+    name:
+      - golang
+    state: present
 
 - name: Install elixir
   become: true
@@ -69,8 +72,7 @@
   args:
     creates: /home/{{ ansible_user_id }}/.rbenv/versions/3.1.2/lib/ruby/gems/3.1.0/gems/rails-
 
-
-# - name: Install aws cli tools
+# TODO - name: Install aws cli tools
 #   become: true
 #   dnf:
 #     name:
@@ -83,6 +85,17 @@
     name:
       - podman
     state: present
+
+- name: Install flatpack
+  become: true
+  dnf:
+    name:
+      - flatpak
+    state: present
+
+- name: Install podman-desktop
+  become: false
+  command: flatpak install flathub io.github.containers.PodmanDesktop
 
 - name: Add Microsoft GPG key
   rpm_key:
