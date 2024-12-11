@@ -1,5 +1,6 @@
 ---
 # tasks for power user role
+
 - name: Install power user packages
   become: true
   dnf:
@@ -67,19 +68,21 @@
     dest: "{{ ansible_env.HOME }}/.oh-my-zsh/custom/themes/powerlevel10k"
     depth: 1
 
+# TODO copy a preconfigured zshrc file for p10k 
 - name: Copy zshrc (for p10k)
   ansible.builtin.copy:
     src: zshrc-p10k
     dest: "{{ ansible_env.HOME }}/.zshrc"
     mode: 0644
-  when: copy_dot_files
+  when: false # copy_dot_files
 
+# TODO is this needed?
 - name: Copy p10k.zsh
   ansible.builtin.copy:
     src: p10k.zsh
     dest: "{{ ansible_env.HOME }}/.p10k.zsh"
     mode: 0644
-  when: copy_dot_files
+  when: false # copy_dot_files
 
 # task to set Powerlevel10k theme in .zshrc
 - name: Set Powerlevel10k theme in .zshrc
@@ -89,7 +92,6 @@
     line: 'ZSH_THEME="powerlevel10k/powerlevel10k"'
   notify: reload zsh
 
-
 # task to use oh-my-zsh plugins
 - name: Use oh-my-zsh plugins
   lineinfile:
@@ -98,16 +100,11 @@
     line: 'plugins=(git aws web-search base64 zsh-autosuggestions zsh-syntax-highlighting)'
   notify: reload zsh
 
-# handler to reload zsh configuration
-- name: reload zsh
-  command: zsh -ic "source {{ ansible_env.HOME }}/.zshrc"
-  when: false
-
 # task to set zsh as default shell
 - name: Set zsh as default shell
-  user:
-    name: "{{ ansible_user }}"
-    shell: /bin/zsh
+  become: true
+  ansible.builtin.shell:
+    cmd: chsh -s /usr/bin/zsh "{{ ansible_user_id }}"
 
 # task to enable copr repository for IOSevka font
 - name: Enable copr repository for IOSevka font
@@ -128,6 +125,6 @@
   copy:
     src: static-content/vimrc
     dest: "{{ ansible_env.HOME }}/.vimrc"
-    owner: "{{ ansible_user }}"
-    group: "{{ ansible_user }}"
+    owner: "{{ ansible_user_id }}"
+    group: "{{ ansible_user_id }}"
     mode: 0644

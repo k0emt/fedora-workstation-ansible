@@ -1,6 +1,7 @@
 ---
 # tasks for AI researcher role
 - name: Install AI researcher packages
+  become: true
   dnf:
     name:
       - python3
@@ -8,6 +9,7 @@
     state: present
 
 - name: Install AI Python packages
+  become: true
   pip:
     name:
       - numpy

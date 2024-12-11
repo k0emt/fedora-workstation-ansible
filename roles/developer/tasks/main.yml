@@ -1,6 +1,7 @@
 ---
 # tasks for developer role
 - name: Install developer packages
+  become: true
   dnf:
     name:
       - git
@@ -13,12 +14,12 @@
 - name: Install node version manager
   shell: curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.38.0/install.sh | bash
   args:
-    creates: /home/{{ ansible_user }}/nvm
+    creates: /home/{{ ansible_user_id }}/nvm
 
 - name: Install node.js
-  shell: source /home/{{ ansible_user }}/nvm/nvm.sh && nvm install node
+  shell: source /home/{{ ansible_user_id }}/nvm/nvm.sh && nvm install node
   args:
-    creates: /home/{{ ansible_user }}/.nvm
+    creates: /home/{{ ansible_user_id }}/.nvm
 
 - name: Install golang
   shell: curl -o- https://golang.org/dl/go1.17.1.linux-amd64.tar.gz | tar -C /usr/local -xzf -
@@ -26,6 +27,7 @@
     creates: /usr/local/go
 
 - name: Install elixir
+  become: true
   dnf:
     name:
       - erlang
@@ -36,6 +38,7 @@
 
 # install ruby and rails with rbenv
 - name: Install rbenv
+  become: true
   dnf:
     name:
       - rbenv
@@ -54,7 +57,7 @@
 - name: Install ruby
   shell: rbenv install {{ ruby_version }}
   args:
-    creates: /home/{{ ansible_user }}/.rbenv/versions/{{ ruby_version }}
+    creates: /home/{{ ansible_user_id }}/.rbenv/versions/{{ ruby_version }}
 
 # set the global version of ruby to 3.1.2
 - name: Set global ruby version
@@ -64,15 +67,18 @@
 - name: Install rails
   shell: gem install rails
   args:
-    creates: /home/{{ ansible_user }}/.rbenv/versions/3.1.2/lib/ruby/gems/3.1.0/gems/rails-
+    creates: /home/{{ ansible_user_id }}/.rbenv/versions/3.1.2/lib/ruby/gems/3.1.0/gems/rails-
 
-- name: Install aws cli tools
-  dnf:
-    name:
-      - aws-cli
-    state: present
+
+# - name: Install aws cli tools
+#   become: true
+#   dnf:
+#     name:
+#       - aws-cli
+#     state: present
 
 - name: Install podman
+  become: true
   dnf:
     name:
       - podman
@@ -84,6 +90,7 @@
     key: https://packages.microsoft.com/keys/microsoft.asc
 
 - name: Add VS Code repository
+  become: true
   copy:
     content: |
       [code]
@@ -95,6 +102,7 @@
     dest: /etc/yum.repos.d/vscode.repo
 
 - name: Install VS Code
+  become: true
   dnf:
     name: code
     state: present

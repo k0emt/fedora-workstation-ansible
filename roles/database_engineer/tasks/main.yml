@@ -4,6 +4,7 @@
 # I do however, want the client software for postgresql, mysql, redis, and mongodb (like mongosh)
 
 - name: Install database clients and tools
+  become: true
   dnf:
     name:
       - pgadmin4

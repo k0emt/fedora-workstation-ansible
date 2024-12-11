@@ -1,6 +1,7 @@
 # tasks for installing user applications
 # TODO OBS Studio and OBS Virtual Camera < https://obsproject.com/ >
 - name: Install user applications
+  become: true
   dnf:
     name:
       - qrq
@@ -16,30 +17,35 @@
 
 # make sure system has flatpak installed
 - name: Install flatpak
+  become: true
   dnf:
     name: flatpak
     state: present
 
 # flatpack install of Slack
 - name: Install Slack
+  become: true
   flatpak:
     name: slack
     state: present
 
 # flatpack install of Discord
 - name: Install Discord
+  become: true
   flatpak:
     name: discord
     state: present
 
 # task to install Zoom
 - name: Install Zoom
+  become: true
   dnf:
     name: https://zoom.us/client/latest/zoom_x86_64.rpm
     state: present
 
 # task to install Microsoft Edge
 - name: Install Microsoft Edge
+  become: true
   dnf:
     name: https://packages.microsoft.com/yumrepos/edge/edge-release.rpm
     state: present
@@ -58,8 +64,8 @@
 
 # set the background image to the first image in the Wallpapers directory
 - name: Set background image
-  shell: gsettings set org.gnome.desktop.background picture-uri file:///home/{{ ansible_user }}/Pictures/Wallpapers/{{ item }}
+  shell: gsettings set org.gnome.desktop.background picture-uri file:///home/{{ ansible_user_id }}/Pictures/Wallpapers/{{ item }}
   with_first_found:
     - "*.jpg"
     - "*.png"
-  notify: reload gnome
+  # notify: reload gnome
