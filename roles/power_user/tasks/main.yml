@@ -95,7 +95,7 @@
   lineinfile:
     path: "{{ ansible_env.HOME }}/.zshrc"
     regexp: '^plugins='
-    line: 'plugins=(git aws web-search base64 zsh-autosuggestions zsh-syntax-highlighting)'
+    line: 'plugins=(git aws web-search encode64 zsh-autosuggestions zsh-syntax-highlighting)'
   notify: reload zsh
 
 # task to set zsh as default shell
