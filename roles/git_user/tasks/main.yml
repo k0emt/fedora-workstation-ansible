@@ -25,7 +25,7 @@
 # copy global-git-ignore.txt to users ~/.gitignore_global
 - name: Copy global git ignore file
   copy:
-    src: global-git-ignore.txt
+    src: "{{ playbook_dir }}/global-git-ignore.txt"
     dest: "{{ ansible_env.HOME }}/.gitignore_global"
 
 # set the global git ignore file
