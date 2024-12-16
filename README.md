@@ -25,12 +25,18 @@ How to do the initial bootstrap of getting ansible on the system:
 sudo dnf install ansible
 ```
 
-## Running the playbook
+## Running the playbooks
 
 To run the playbook on your local workstation, use the following command:
 
 ```shell
 ansible-playbook -i localhost, -c local workstation.yml --ask-become-pass
+```
+
+For developer packages:
+
+```shell
+ansible-playbook -i localhost, -c local developer.yml --ask-become-pass
 ```
 
 ### Install just one role
@@ -49,3 +55,14 @@ ansible-playbook -i localhost, -c local workstation.yml --check --ask-become-pas
 
 - [How to test in a WSL2 instance](wsl2-testing.md)
 - [How to test with a container](container.md)
+
+## Not Implemented
+
+Tools, etc not installed:
+
+- developer: AWS CLI
+- developer: nvm - node version manager and a version of node
+- ai: TensorFlow as it should really be [installed in a virtual environment](https://idroot.us/install-tensorflow-fedora-41/).
+- db: pgadmin4
+- db: [mongodb mongosh]( https://idroot.us/install-mongodb-fedora-41/)
+- db: [dBeaver]( https://dbeaver.io/download/)

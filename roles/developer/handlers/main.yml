@@ -1,0 +1,3 @@
+# handler to reload zsh configuration
+- name: reload zsh
+  command: zsh -ic "source {{ ansible_env.HOME }}/.zshrc"

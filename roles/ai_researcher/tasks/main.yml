@@ -24,11 +24,10 @@
       - numpy
       - pandas
       - scikit-learn
-      # - tensorflow
       - keras
       - matplotlib
       - ggplot
       - bokeh
 
-# TODO tensorflow ?
+# Don't do Tensor Flow as it should really be installed in a virtual environment
 # https://idroot.us/install-tensorflow-fedora-41/

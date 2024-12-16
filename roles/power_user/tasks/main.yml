@@ -34,6 +34,7 @@
 - name: Install Oh My Zsh
   ansible.builtin.shell:
     cmd: sh -c "$(curl -fsSL https://raw.github.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
+    creates: "{{ ansible_env.HOME }}/.oh-my-zsh"
 
 - name: Install zsh-autosuggestions plugin # noqa: latest
   ansible.builtin.git:
