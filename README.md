@@ -60,6 +60,8 @@ ansible-playbook -i localhost, -c local workstation.yml --check --ask-become-pas
 
 Tools, etc not installed:
 
+- app_user: slack, discord, zoom, edge
+- power_user: iosevka font
 - developer: AWS CLI
 - developer: nvm - node version manager and a version of node
 - ai: TensorFlow as it should really be [installed in a virtual environment](https://idroot.us/install-tensorflow-fedora-41/).
