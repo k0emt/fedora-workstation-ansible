@@ -1,5 +1,7 @@
 # Fedora Workstation Ansible
 
+[![License: CC BY-NC 4.0](https://img.shields.io/badge/License-CC%20BY--NC%204.0-lightgrey.svg)](https://creativecommons.org/licenses/by-nc/4.0/)
+
 This project contains ansible resources for setting up a new Fedora workstation.
 
 Roles that will be created include: ai_researcher, database_engineer, developer, git_user, power_user
