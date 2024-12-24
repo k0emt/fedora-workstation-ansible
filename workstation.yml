@@ -3,8 +3,8 @@
   become: no
 
   vars_files:
-    - git_user_vars.yml
-    - global_vars.yml
+    - vars/git_user_vars.yml
+    - vars/global_vars.yml
 
   pre_tasks:
     - name: Check if git_user_name is set to default
