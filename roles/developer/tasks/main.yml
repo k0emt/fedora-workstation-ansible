@@ -119,3 +119,7 @@
   dnf:
     name: code
     state: present
+
+- name: Install gitnuro (git GUI)
+  become: false
+  command: flatpak install flathub com.jetpackduba.Gitnuro
