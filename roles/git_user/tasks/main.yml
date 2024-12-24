@@ -6,6 +6,8 @@
   dnf:
     name:
       - git
+      - gitk
+      - git-gui
     state: present
 
 # tasks for configuring git
