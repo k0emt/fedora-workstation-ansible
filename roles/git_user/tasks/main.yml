@@ -44,7 +44,7 @@
 
 # Loop through the SSH key names and create keys
 - name: Create new ssh keys
-  command: ssh-keygen -t ed25519 -C "{{ git_user_email }}" -f "{{ ansible_env.HOME }}/.ssh/id_ed25519_{{ item.name }}" -N ""
+  command: yes n | ssh-keygen -t ed25519 -C "{{ git_user_email }}" -f "{{ ansible_env.HOME }}/.ssh/id_ed25519_{{ item.name }}" -N ""
   args:
     creates: "{{ ansible_env.HOME }}/.ssh/id_ed25519_{{ item.name }}"
   loop: "{{ ssh_keys }}"

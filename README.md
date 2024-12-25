@@ -4,7 +4,7 @@
 
 This project contains ansible resources for setting up a new Fedora workstation.
 
-Roles that will be created include: ai_researcher, database_engineer, developer, git_user, power_user
+Roles that will be created include: ai_researcher, database_engineer, developer, git_user, power_user, amateur_radio
 
 ## Project Structure
 

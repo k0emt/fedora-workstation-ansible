@@ -40,7 +40,9 @@
   roles:
     - git_user
     - power_user
+    - amateur_radio
     - app_user
-    # TODO - developer
+    - developer
     - ai_researcher
     - database_engineer
+    # communicator
