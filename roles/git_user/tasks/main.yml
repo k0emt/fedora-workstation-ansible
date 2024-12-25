@@ -10,6 +10,11 @@
       - git-gui
     state: present
 
+# Debug before configuring git
+- name: Debug - Before configuring git
+  debug:
+    msg: "Starting git configuration tasks"
+
 # tasks for configuring git
 
 - name: Configure Git user name
@@ -23,6 +28,11 @@
 
 - name: Set default merge strategy to rebase
   command: git config --global pull.rebase true
+
+# Debug before copying global git ignore file
+- name: Debug - Before copying global git ignore
+  debug:
+    msg: "Copying global git ignore file"
 
 # copy global-git-ignore.txt to users ~/.gitignore_global
 - name: Copy global git ignore file
@@ -42,9 +52,19 @@
 - name: Create .ssh directory
   file: path="{{ ansible_env.HOME }}/.ssh" state=directory
 
+# Debug before creating new ssh keys
+- name: Debug - Before creating new ssh keys
+  debug:
+    msg: "Creating new ssh keys"
+
 # Loop through the SSH key names and create keys
 - name: Create new ssh keys
   command: yes n | ssh-keygen -t ed25519 -C "{{ git_user_email }}" -f "{{ ansible_env.HOME }}/.ssh/id_ed25519_{{ item.name }}" -N ""
   args:
     creates: "{{ ansible_env.HOME }}/.ssh/id_ed25519_{{ item.name }}"
   loop: "{{ ssh_keys }}"
+
+# Debug after creating new ssh keys
+- name: Debug - After creating new ssh keys
+  debug:
+    msg: "Finished creating new ssh keys"
