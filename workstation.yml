@@ -7,6 +7,20 @@
     - vars/global_vars.yml
 
   pre_tasks:
+    - name: Get global git username
+      command: git config --global user.name
+      register: git_user_name
+      ignore_errors: true
+
+    - name: Get global git user email
+      command: git config --global user.email
+      register: git_user_email
+      ignore_errors: true
+
+    - name: Set git_user_name variable
+      set_fact:
+        git_user_name: "{{ git_user_name.stdout if git_user_name.stdout else 'Set Your Git User Name' }}"
+
     - name: Check if git_user_name is set to default
       set_fact:
         prompt_for_git_user_name: "{{ git_user_name == 'Set Your Git User Name' }}"
