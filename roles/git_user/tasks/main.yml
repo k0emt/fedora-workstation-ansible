@@ -1,6 +1,11 @@
 ---
 # install git
 
+# Debug 
+- name: Debug - top of file
+  debug:
+    msg: "dnf Installing git tools"
+
 - name: Install Git
   become: true
   dnf:
