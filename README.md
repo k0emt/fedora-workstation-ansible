@@ -67,6 +67,6 @@ Tools, etc not installed:
 - developer: AWS CLI
 - developer: nvm - node version manager and a version of node
 - ai: TensorFlow as it should really be [installed in a virtual environment](https://idroot.us/install-tensorflow-fedora-41/).
-- db: pgadmin4
+- db: [pgadmin4](https://www.pgadmin.org/download/pgadmin-4-rpm/)
 - db: [mongodb mongosh]( https://idroot.us/install-mongodb-fedora-41/)
 - db: [dBeaver]( https://dbeaver.io/download/)

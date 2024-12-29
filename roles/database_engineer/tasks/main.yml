@@ -8,7 +8,7 @@
   dnf:
     name:
       - pgcli
-      - pgadmin4
+      # - pgadmin4
       - mycli
       - valkey
       - valkey-doc
