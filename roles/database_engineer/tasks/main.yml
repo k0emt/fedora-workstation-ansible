@@ -7,15 +7,24 @@
   become: true
   dnf:
     name:
-      # TODO - pgadmin4
       - pgcli
       - mycli
       - valkey
       - valkey-doc
     state: present
 
-# TODO add a linked? task file for mongodb
-# https://idroot.us/install-mongodb-fedora-41/
+# add repository for pgadmin4
+- name: Add pgadmin4 repository
+  become: true
+  dnf:
+    name: https://ftp.postgresql.org/pub/pgadmin/pgadmin4/yum/pgadmin4-fedora-repo-2-1.noarch.rpm
+    state: present
 
-# TODO install dbeaver
-# https://dbeaver.io/download/
+- name: Install pgadmin4
+  become: true
+  dnf:
+    name: 
+      - pgadmin4
+      - pgadmin4-desktop
+    state: present
+

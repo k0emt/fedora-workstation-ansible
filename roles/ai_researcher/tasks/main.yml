@@ -2,7 +2,7 @@
 # tasks for AI researcher role
 - name: Install AI researcher packages
   become: true
-  dnf:
+  ansible.builtin.dnf:
     name:
       - gcc
       - git
@@ -28,6 +28,3 @@
       - matplotlib
       - ggplot
       - bokeh
-
-# Don't do Tensor Flow as it should really be installed in a virtual environment
-# https://idroot.us/install-tensorflow-fedora-41/

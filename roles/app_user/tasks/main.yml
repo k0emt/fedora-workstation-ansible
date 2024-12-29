@@ -1,13 +1,11 @@
+---
 # tasks for installing user applications
-# TODO OBS Studio and OBS Virtual Camera < https://obsproject.com/ >
 - name: Install user applications
   become: true
   dnf:
     name:
-      - qrq
       - audacity
-      - openscad
-      - kicad
+      - obs-studio
       - gimp
       - inkscape
       - krita
@@ -15,62 +13,52 @@
       - thunderbird
     state: present
 
-# TODO: move these tasks to a separate role called communications ?
+- name: Set up Wallpapers
+  become: false
+  block:
+    - name: Ensure Pictures directory exists
+      file:
+        path: "/home/{{ ansible_user }}/Pictures/Wallpapers"
+        state: directory
+      ignore_errors: true
 
-# # make sure system has flatpak installed
-# - name: Install flatpak
-#   become: true
-#   dnf:
-#     name: flatpak
-#     state: present
+    - name: Copy background images
+      copy:
+        src: "{{ playbook_dir }}/Wallpapers/"
+        dest: "/home/{{ ansible_user }}/Pictures/Wallpapers/"
+        remote_src: no
+        force: no
+      ignore_errors: true
 
-# # flatpack install of Slack
-# - name: Install Slack
-#   become: true
-#   flatpak:
-#     name: slack
-#     state: present
+    - name: Find first available wallpaper
+      find:
+        paths: "/home/{{ ansible_user }}/Pictures/Wallpapers"
+        patterns:
+          - "*.jpeg"
+          - "*.jpg"
+          - "*.png"
+          - "*.webp"
+        file_type: file
+      register: wallpaper_files
+      failed_when: false
 
-# # flatpack install of Discord
-# - name: Install Discord
-#   become: true
-#   flatpak:
-#     name: discord
-#     state: present
+    - name: Pick a random wallpaper
+      when: wallpaper_files.matched > 0
+      set_fact:
+        random_wallpaper: "{{ wallpaper_files.files | random }}"
+      failed_when: false
 
-# # task to install Zoom
-# - name: Install Zoom
-#   become: true
-#   dnf:
-#     name: https://zoom.us/client/latest/zoom_x86_64.rpm
-#     state: present
-
-# # task to install Microsoft Edge
-# - name: Install Microsoft Edge
-#   become: true
-#   dnf:
-#     name: https://packages.microsoft.com/yumrepos/edge/edge-release.rpm
-#     state: present
-
-- name: Ensure Pictures directory exists
-  file:
-    path: "{{ home_dir }}/Pictures/Wallpapers"
-    state: directory
-
-# copy background images from project's Wallpapers directory to user's Pictures directory
-- name: Copy background images
-  copy:
-    src: "{{ playbook_dir }}/Wallpapers/"
-    dest: "{{ home_dir }}/Pictures/Wallpapers/"
-    remote_src: no
-
-# TODO: set the background image to the first image in the Wallpapers directory
-# - name: Set background image
-#   shell: gsettings set org.gnome.desktop.background picture-uri file://{{ home_dir }}/Pictures/Wallpapers/{{ item }}
-#   with_first_found:
-#     - files:
-#         - "*.jpg"
-#         - "*.png"
-#       paths:
-#         - "{{ home_dir }}/Pictures/Wallpapers/"
-  # notify: reload gnome
+    - name: Set random wallpaper
+      when: wallpaper_files.matched > 0
+      shell: |
+        gsettings set org.gnome.desktop.background picture-uri "file://{{ random_wallpaper.path }}"
+        gsettings set org.gnome.desktop.background picture-uri-dark "file://{{ random_wallpaper.path }}"
+      ignore_errors: true
+  rescue:
+    - name: Wallpaper setup failed
+      debug:
+        msg: "Could not complete wallpaper setup."
+  always:
+    - name: Wallpaper setup block completed
+      debug:
+        msg: "Wallpaper setup block has finished."

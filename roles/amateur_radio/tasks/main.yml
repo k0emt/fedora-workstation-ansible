@@ -1,0 +1,10 @@
+---
+# tasks for installing amateur radio related applications
+- name: Install amateur radio applications
+  become: true
+  dnf:
+    name:
+      - qrq
+      - openscad
+      - kicad
+    state: present

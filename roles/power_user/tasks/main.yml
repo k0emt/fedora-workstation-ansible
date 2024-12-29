@@ -1,5 +1,85 @@
 ---
-# tasks for power user role
+# task to install zsh
+- name: Install zsh
+  become: true
+  dnf:
+    name: zsh
+    state: present
+
+# task to change user shell to zsh
+- name: Change user shell to zsh 
+  become: true
+  ansible.builtin.user:
+    name: "{{ ansible_user }}"
+    shell: /bin/zsh
+
+# Add this debug task before the existing tasks to verify variables
+- name: Debug user variables
+  ansible.builtin.debug:
+    msg: 
+      - "ansible_user: {{ ansible_user }}"
+
+# task to make sure that user .zshrc file exists
+- name: Ensure .zshrc file exists
+  become: false
+  ansible.builtin.file:
+    path: "/home/{{ ansible_user }}/.zshrc"
+    state: touch
+    mode: '0644'
+
+# task to install oh-my-zsh
+- name: Install Oh My Zsh
+  become: false
+  ansible.builtin.shell:
+    cmd: sh -c "$(curl -fsSL https://raw.github.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
+    creates: "/home/{{ ansible_user }}/.oh-my-zsh"
+
+- name: Install zsh-autosuggestions plugin # noqa: latest
+  become: false
+  ansible.builtin.git:
+    repo: https://github.com/zsh-users/zsh-autosuggestions
+    dest: "/home/{{ ansible_user }}/.oh-my-zsh/custom/plugins/zsh-autosuggestions"
+    depth: 1
+
+- name: Install zsh-completions plugin # noqa: latest
+  become: false
+  ansible.builtin.git:
+    repo: https://github.com/zsh-users/zsh-completions.git
+    dest: "/home/{{ ansible_user }}/.oh-my-zsh/custom/plugins/zsh-completions"
+    depth: 1
+
+- name: Install zsh-syntax-highlighting plugin # noqa: latest
+  become: false
+  ansible.builtin.git:
+    repo: https://github.com/zsh-users/zsh-syntax-highlighting.git
+    dest: "/home/{{ ansible_user }}/.oh-my-zsh/custom/plugins/zsh-syntax-highlighting"
+    depth: 1
+
+# task to install Powerlevel10k theme
+- name: Install Powerlevel10k theme
+  become: false
+  ansible.builtin.git:
+    repo: https://github.com/romkatv/powerlevel10k.git
+    dest: "/home/{{ ansible_user }}/.oh-my-zsh/custom/themes/powerlevel10k"
+    depth: 1
+
+# task to set Powerlevel10k theme in .zshrc
+- name: Set Powerlevel10k theme in .zshrc
+  become: false
+  lineinfile:
+    path: "/home/{{ ansible_user }}/.zshrc"
+    regexp: '^ZSH_THEME='
+    line: 'ZSH_THEME="powerlevel10k/powerlevel10k"'
+  notify: reload zsh
+
+# task to use oh-my-zsh plugins
+- name: Use oh-my-zsh plugins
+  become: false
+  lineinfile:
+    path: "/home/{{ ansible_user }}/.zshrc"
+    regexp: '^plugins='
+    line: 'plugins=(git aws web-search encode64 zsh-autosuggestions zsh-syntax-highlighting)'
+  notify: reload zsh
 
 - name: Install power user packages
   become: true
@@ -19,113 +99,64 @@
       - tmux
       - tree
       - unzip
+      - vim-common
+      - vim-enhanced
       - wget
       - zip
     state: present
 
-# task to install zsh
-- name: Install zsh
-  become: true
-  dnf:
-    name: zsh
-    state: present
-
-# task to install oh-my-zsh
-- name: Install Oh My Zsh
-  ansible.builtin.shell:
-    cmd: sh -c "$(curl -fsSL https://raw.github.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
-    creates: "{{ ansible_env.HOME }}/.oh-my-zsh"
-
-- name: Install zsh-autosuggestions plugin # noqa: latest
-  ansible.builtin.git:
-    repo: https://github.com/zsh-users/zsh-autosuggestions
-    dest: "{{ ansible_env.HOME }}/.oh-my-zsh/custom/plugins/zsh-autosuggestions"
-    depth: 1
-
-- name: Install zsh-completions plugin # noqa: latest
-  ansible.builtin.git:
-    repo: https://github.com/zsh-users/zsh-completions.git
-    dest: "{{ ansible_env.HOME }}/.oh-my-zsh/custom/plugins/zsh-completions"
-    depth: 1
-
-- name: Install zsh-syntax-highlighting plugin # noqa: latest
-  ansible.builtin.git:
-    repo: https://github.com/zsh-users/zsh-syntax-highlighting.git
-    dest: "{{ ansible_env.HOME }}/.oh-my-zsh/custom/plugins/zsh-syntax-highlighting"
-    depth: 1
-
-- name: Change user shell to zsh 
-  become: true
-  ansible.builtin.user:
-    name: "{{ ansible_user_id }}"
-    shell: /bin/zsh
-
-# task to install Powerlevel10k theme
-- name: Install Powerlevel10k theme
-  ansible.builtin.git:
-    repo: https://github.com/romkatv/powerlevel10k.git
-    dest: "{{ ansible_env.HOME }}/.oh-my-zsh/custom/themes/powerlevel10k"
-    depth: 1
-
-# TODO copy a preconfigured zshrc file for p10k 
-- name: Copy zshrc (for p10k)
-  ansible.builtin.copy:
-    src: zshrc-p10k
-    dest: "{{ ansible_env.HOME }}/.zshrc"
-    mode: 0644
-  when: false # copy_dot_files
-
-# TODO is this needed?
-- name: Copy p10k.zsh
-  ansible.builtin.copy:
-    src: p10k.zsh
-    dest: "{{ ansible_env.HOME }}/.p10k.zsh"
-    mode: 0644
-  when: false # copy_dot_files
-
-# task to set Powerlevel10k theme in .zshrc
-- name: Set Powerlevel10k theme in .zshrc
-  lineinfile:
-    path: "{{ ansible_env.HOME }}/.zshrc"
-    regexp: '^ZSH_THEME='
-    line: 'ZSH_THEME="powerlevel10k/powerlevel10k"'
-  notify: reload zsh
-
-# task to use oh-my-zsh plugins
-- name: Use oh-my-zsh plugins
-  lineinfile:
-    path: "{{ ansible_env.HOME }}/.zshrc"
-    regexp: '^plugins='
-    line: 'plugins=(git aws web-search encode64 zsh-autosuggestions zsh-syntax-highlighting)'
-  notify: reload zsh
-
-# task to set zsh as default shell
-- name: Set zsh as default shell
-  become: true
-  ansible.builtin.shell:
-    cmd: chsh -s /usr/bin/zsh "{{ ansible_user_id }}"
-
-# TODO extract this out into a separate FONTs task?
-# task to enable copr repository for IOSevka font
-# - name: Enable copr repository for IOSevka font
-#   command: dnf copr enable peterwu/iosevka
-#   become: true
-
-# # task to install IOSevka fonts
-# - name: Install IOSevka fonts
-#   become: true
-#   dnf:
-#       name: 
-#         - iosevka
-#         # - iosevka-fixed-ss04-fonts
-#         # - iosevka-term-ss04-fonts
-#       state: present
-
   # copy file static-content/vimrc to users ~/.vimrc
 - name: Copy .vimrc to user's home directory
+  become: false
   copy:
     src: "{{ playbook_dir }}/static-content/vimrc"
-    dest: "{{ ansible_env.HOME }}/.vimrc"
-    owner: "{{ ansible_user_id }}"
-    group: "{{ ansible_user_id }}"
+    dest: "/home/{{ ansible_user }}/.vimrc"
+    owner: "{{ ansible_user }}"
+    group: "{{ ansible_user }}"
     mode: 0644
+    backup: true
+    force: no
+
+- name: Install IOSevka fonts and dependencies
+  block:
+    - name: Enhance dnf so we can use copr
+      become: true
+      dnf:
+        name: dnf-plugins-core
+        state: present
+
+    - name: Enable copr repository for IOSevka font
+      become: true
+      ansible.builtin.command:
+        cmd: dnf copr enable -y peterwu/iosevka
+      register: copr_result
+      changed_when: "'Already enabled' not in copr_result.stdout"
+      failed_when: false
+
+    - name: Install IOSevka fonts
+      become: true
+      dnf:
+        name: 
+          - iosevka-fixed-ss04-fonts
+          - iosevka-term-ss04-fonts
+        state: present
+      register: font_install
+      ignore_errors: true
+
+  rescue:
+    - name: Handle font installation failure
+      debug:
+        msg: "Failed to install IOSevka fonts. Continuing with playbook execution."
+    - name: Set fact for font installation status
+      set_fact:
+        iosevka_installed: false
+
+  always:
+    - name: Clean dnf cache
+      become: true
+      command: dnf clean expire-cache
+      changed_when: false
+
+  tags:
+    - fonts
+    - iosevka
