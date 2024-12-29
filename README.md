@@ -4,7 +4,22 @@
 
 This project contains ansible resources for setting up a new Fedora workstation.
 
-Roles that will be created include: ai_researcher, database_engineer, developer, git_user, power_user, amateur_radio
+Roles that will be setup are:
+
+- Git User: git, gitk, git-gui, user configuration
+- Power User:
+  - zsh, oh-my-zsh, extensions, powerlevel10k, plugins
+  - numerous command line tools
+    - btop, bat, eza, fzf, mc, fastfetch, tldr, tmux, tree, vim, wget...
+  - .vimrc file
+  - IOSevka fonts installed
+- App User: audacity, OBS studio, gimp,inkscape, krita, hexchat, thunderbird
+  - Wallpapers
+- Amateur Radio: QRQ, OpenSCAD, kiCAD
+- Developer: gcc, make, python3, go lang, elixir, rbenv, ruby, rails, podman, podman desktop, VS Code, gitnuro
+- AI researcher: gcc, git, python3, numpy, pandas, scikit-learn, keras, matplotlib, ggplot, bokeh
+- Database Engineer: pgcli, pgadmin4-desktop, valkey, valkey-doc
+- Communicator: Slack, Discord, Zoom, Edge
 
 ## Project Structure
 
@@ -14,6 +29,7 @@ fedora-workstation-ansible/
 ├── workstation.yml
 └── roles/
     ├── role_name/
+    │   ├── handlers/
     │   ├── tasks/
     │   │   └── main.yml
     ...
@@ -27,7 +43,7 @@ How to do the initial bootstrap of getting ansible on the system:
 sudo dnf install ansible
 ```
 
-## Running the playbooks
+## Running the playbook
 
 To run the playbook on your local workstation, use the following command:
 
@@ -35,17 +51,33 @@ To run the playbook on your local workstation, use the following command:
 ansible-playbook -i localhost, -c local workstation.yml --ask-become-pass -u YOUR_USERNAME
 ```
 
-For developer packages only:
+### Install Custom roles
 
-```shell
-ansible-playbook -i localhost, -c local developer.yml --ask-become-pass -u YOUR_USERNAME
-```
-
-### Install just one role
-
-To run with just one role, you can modify the workstation.yml file or duplicate it.
+To run with selected roles, you can modify the `workstation.yml` file or duplicate it.
 Alter the duplicated file to have only the roles you want to run.
-On the command line specify the new file name.
+You can do this by adding a \# before the role name.
+On the command line specify the new file name instead of `workstation.yml`
+
+## Post install
+
+Run `p10k configure` in a new terminal if you aren't prompted to set up powerlevel 10K.
+
+[Set up TensorFlow in virtual environment](https://idroot.us/install-tensorflow-fedora-41/).
+
+The client tool for postgresql is installed.
+However, you will need to [install the postgresql server](https://docs.fedoraproject.org/en-US/quick-docs/postgresql/) if you want a local server.
+
+Install [nvm](https://github.com/nvm-sh/nvm) and a version of node.
+
+Install [mongodb mongosh]( https://idroot.us/install-mongodb-fedora-41/)
+
+Install [dBeaver]( https://dbeaver.io/download/)
+
+Install [AWS CLI]( https://docs.aws.amazon.com/cli/latest/userguide/getting-started-install.html)
+
+## TODO
+
+Lint everything and make sure it is all idiomatic.
 
 ## Developer Information
 
@@ -57,16 +89,3 @@ ansible-playbook -i localhost, -c local workstation.yml --check --ask-become-pas
 
 - [How to test in a WSL2 instance](wsl2-testing.md)
 - [How to test with a container](container.md)
-
-## Not Implemented
-
-Tools, etc not installed:
-
-- app_user: slack, discord, zoom, edge
-- power_user: iosevka font, run `p10k configure` post install
-- developer: AWS CLI
-- developer: nvm - node version manager and a version of node
-- ai: TensorFlow as it should really be [installed in a virtual environment](https://idroot.us/install-tensorflow-fedora-41/).
-- db: [pgadmin4](https://www.pgadmin.org/download/pgadmin-4-rpm/)
-- db: [mongodb mongosh]( https://idroot.us/install-mongodb-fedora-41/)
-- db: [dBeaver]( https://dbeaver.io/download/)

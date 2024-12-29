@@ -1,5 +1,5 @@
-git_user_name: "Set Your Git User Name"
-git_user_email: "set.your.email@example.com"
+git_user_name: ""
+git_user_email: ""
 
 # Define the SSH key names
 ssh_keys:

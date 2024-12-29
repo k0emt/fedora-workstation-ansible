@@ -12,55 +12,59 @@
       command: git config --global user.name
       register: git_user_name
       ignore_errors: true
+      changed_when: false
 
     - name: Get global git user email
       become: false
       command: git config --global user.email
       register: git_user_email
       ignore_errors: true
-
-    - name: Debug - are git user variables set
-      become: false
-      debug:
-        msg: 
-          - "Git user variables are set"
-          - "git_user_name: {{ git_user_name }}"
-          - "git_user_email: {{ git_user_email }}"
-      ignore_errors: true
+      changed_when: false
 
     - name: Set initial git username state
       set_fact:
-        git_config:
-          username: "{{ git_user_name.stdout | default('') }}"
-          needs_setup: "{{ not git_user_name.stdout | bool }}"
+        existing_git_config:
+          username: "{{ git_user_name.stdout }}"
+          email: "{{ git_user_email.stdout }}"
 
-    - name: Request Git username if not configured
+    - name: Debug - git user variables
+      become: false
+      debug:
+        msg:
+          - "Git user configuration:"
+          - "Username: {{ existing_git_config.username }}"
+          - "Email: {{ existing_git_config.email }}"
+      ignore_errors: true
+
+    - name: Configure Git username
+      become: false
       block:
+        - name: Check if git username needs configuration
+          set_fact:
+            needs_setup: "{{ existing_git_config.username | length == 0 }}"
+
         - name: Prompt for Git username
           pause:
             prompt: "Please enter your full name for Git configuration (leave empty to skip)"
           register: git_username_prompt
-          when: git_config.needs_setup
+          when: needs_setup
 
-        - name: Validate and set Git username
-          set_fact:
-            git_config: "{{ git_config | combine({
-              'username': git_username_prompt.user_input | default(git_config.username),
-              'needs_setup': false }) }}"
-          when: git_username_prompt.user_input is defined and git_username_prompt.user_input | trim != ''
-          
-        - name: Display Git username configuration status
+        - name: Set Git username
+          command: "git config --global user.name '{{ git_username_prompt.user_input }}'"
+          when: 
+            - needs_setup 
+            - git_username_prompt.user_input | length > 0
+      rescue:
+        - name: Handle Git config failure
           debug:
-            msg: "Git username is now set to: {{ git_config.username }}"
-          when: not git_config.needs_setup
-      become: false
-      when: git_config.needs_setup
+            msg: "Failed to configure Git username. Please configure manually."
 
     - name: "Git Configuration: Handle User Email"
+      become: false
       block:
         - name: Check if git email needs configuration
           set_fact:
-            needs_email_config: "{{ git_user_email | default('set.your.email@example.com') == 'set.your.email@example.com' }}"
+            needs_email_config: "{{ existing_git_config.email | length == 0 }}"
     
         - name: Collect Git user email
           pause:
@@ -79,7 +83,13 @@
           set_fact:
             git_user_email: "{{ git_email_input.user_input }}"
           when: needs_email_config
-      become: false
+
+        - name: Configure Git user email
+          git_config:
+            name: user.email
+            scope: global
+            value: "{{ git_user_email }}"
+          when: needs_email_config
       tags:
         - git
         - config
@@ -92,4 +102,5 @@
     - developer
     - ai_researcher
     - database_engineer
-    # communicator
+    - communicator
+    # - security - not yet implemented

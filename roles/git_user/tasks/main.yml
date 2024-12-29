@@ -20,13 +20,13 @@
 
 # tasks for configuring git
 
-- name: Configure Git user name
-  become: false
-  command: git config --global user.name "{{ git_user_name }}"
+# - name: Configure Git user name
+#   become: false
+#   command: git config --global user.name "{{ git_user_name }}"
 
-- name: Configure Git user email
-  become: false
-  command: git config --global user.email "{{ git_user_email }}"
+# - name: Configure Git user email
+#   become: false
+#   command: git config --global user.email "{{ git_user_email }}"
 
 - name: Set default Git branch to main
   become: false

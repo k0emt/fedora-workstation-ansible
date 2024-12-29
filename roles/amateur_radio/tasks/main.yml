@@ -1,3 +1,4 @@
+---
 # tasks for installing amateur radio related applications
 - name: Install amateur radio applications
   become: true

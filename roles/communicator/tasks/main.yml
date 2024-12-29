@@ -1,38 +1,46 @@
+---
 # tasks for installing communications applications
 
-# # make sure system has flatpak installed
-# - name: Install flatpak
-#   become: true
-#   dnf:
-#     name: flatpak
-#     state: present
+# make sure system has flatpak installed
+- name: Install flatpak
+  become: true
+  dnf:
+    name: flatpak
+    state: present
 
-# # flatpack install of Slack
-# - name: Install Slack
-#   become: true
-#   flatpak:
-#     name: slack
-#     state: present
+- name: Install Slack
+  become: true
+  flatpak:
+    name: com.slack.Slack
+    state: present
 
-# # flatpack install of Discord
-# - name: Install Discord
-#   become: true
-#   flatpak:
-#     name: discord
-#     state: present
+- name: Install Discord
+  become: true
+  flatpak:
+    name: com.discordapp.Discord
+    state: present
 
-# # task to install Zoom
-# - name: Install Zoom
-#   become: true
-#   dnf:
-#     name: https://zoom.us/client/latest/zoom_x86_64.rpm
-#     state: present
+- name: Install Zoom
+  become: true
+  flatpak:
+    name: us.zoom.Zoom
+    state: present
 
-# # task to install Microsoft Edge
-# - name: Install Microsoft Edge
-#   become: true
-#   dnf:
-#     name: https://packages.microsoft.com/yumrepos/edge/edge-release.rpm
-#     state: present
+# make sure that the microsoft repo for edge is installed
+- name: Add Microsoft Edge repository
+  become: true
+  copy:
+    content: |
+      [microsoft-edge]
+      name=Microsoft Edge
+      baseurl=https://packages.microsoft.com/yumrepos/edge
+      enabled=1
+      gpgcheck=1
+      gpgkey=https://packages.microsoft.com/keys/microsoft.asc
+    dest: /etc/yum.repos.d/microsoft-edge.repo
 
-
+- name: Install Microsoft Edge
+  become: true
+  dnf:
+    name: microsoft-edge-stable
+    state: present
