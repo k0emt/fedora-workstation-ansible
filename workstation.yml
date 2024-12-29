@@ -8,21 +8,25 @@
 
   pre_tasks:
     - name: Get global git username
+      become: false
       command: git config --global user.name
       register: git_user_name
       ignore_errors: true
 
     - name: Get global git user email
+      become: false
       command: git config --global user.email
       register: git_user_email
       ignore_errors: true
 
     - name: Debug - are git user variables set
+      become: false
       debug:
         msg: 
           - "Git user variables are set"
           - "git_user_name: {{ git_user_name }}"
           - "git_user_email: {{ git_user_email }}"
+      ignore_errors: true
 
     - name: Set git_user_name variable
       set_fact:
@@ -33,6 +37,7 @@
         prompt_for_git_user_name: "{{ git_user_name == 'Set Your Git User Name' }}"
 
     - name: Prompt for Git user name
+      become: false
       pause:
         prompt: "Enter your name for Git"
       register: git_user_name_input
@@ -48,6 +53,7 @@
         prompt_for_git_user_email: "{{ git_user_email == 'set.your.email@example.com' }}"
 
     - name: Prompt for Git user email
+      become: false
       pause:
         prompt: "Enter your Git user email"
       register: git_user_email_input

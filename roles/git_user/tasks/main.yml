@@ -1,10 +1,9 @@
 ---
 # install git
 
-# Debug 
 - name: Debug - top of file
   debug:
-    msg: "dnf Installing git tools"
+    msg: "Installing git tools"
 
 - name: Install Git
   become: true
@@ -15,7 +14,6 @@
       - git-gui
     state: present
 
-# Debug before configuring git
 - name: Debug - Before configuring git
   debug:
     msg: "Starting git configuration tasks"
@@ -23,53 +21,60 @@
 # tasks for configuring git
 
 - name: Configure Git user name
+  become: false
   command: git config --global user.name "{{ git_user_name }}"
 
 - name: Configure Git user email
+  become: false
   command: git config --global user.email "{{ git_user_email }}"
 
 - name: Set default Git branch to main
+  become: false
   command: git config --global init.defaultBranch main
 
 - name: Set default merge strategy to rebase
+  become: false
   command: git config --global pull.rebase true
 
-# Debug before copying global git ignore file
 - name: Debug - Before copying global git ignore
   debug:
     msg: "Copying global git ignore file"
 
-# copy global-git-ignore.txt to users ~/.gitignore_global
 - name: Copy global git ignore file
+  become: false
   copy:
     src: "{{ playbook_dir }}/global-git-ignore.txt"
     dest: "/home/{{ ansible_user }}/.gitignore_global"
 
 # set the global git ignore file
 - name: Set global git ignore file
+  become: false
   command: git config --global core.excludesfile "/home/{{ ansible_user }}/.gitignore_global"
 
 # set up a directory for git repositories
 - name: Create git projects directory
+  become: false
   file: path="/home/{{ ansible_user }}/Projects" state=directory
 
 # set up a directory for ssh keys
 - name: Create .ssh directory
+  become: false
   file: path="/home/{{ ansible_user }}/.ssh" state=directory
 
 # Debug before creating new ssh keys
 - name: Debug - Before creating new ssh keys
+  become: false
   debug:
     msg: "Creating new ssh keys"
 
 # Loop through the SSH key names and create keys
 - name: Create new ssh keys
+  become: false
   command: yes n | ssh-keygen -t ed25519 -C "{{ git_user_email }}" -f "/home/{{ ansible_user }}/.ssh/id_ed25519_{{ item.name }}" -N ""
   args:
     creates: "/home/{{ ansible_user }}/.ssh/id_ed25519_{{ item.name }}"
   loop: "{{ ssh_keys }}"
 
-# Debug after creating new ssh keys
 - name: Debug - After creating new ssh keys
   debug:
     msg: "Finished creating new ssh keys"
