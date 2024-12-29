@@ -28,41 +28,61 @@
           - "git_user_email: {{ git_user_email }}"
       ignore_errors: true
 
-    - name: Set git_user_name variable
+    - name: Set initial git username state
       set_fact:
-        git_user_name: "{{ git_user_name.stdout if git_user_name.stdout else 'Set Your Git User Name' }}"
+        git_config:
+          username: "{{ git_user_name.stdout | default('') }}"
+          needs_setup: "{{ not git_user_name.stdout | bool }}"
 
-    - name: Check if git_user_name is set to default
-      set_fact:
-        prompt_for_git_user_name: "{{ git_user_name == 'Set Your Git User Name' }}"
+    - name: Request Git username if not configured
+      block:
+        - name: Prompt for Git username
+          pause:
+            prompt: "Please enter your full name for Git configuration (leave empty to skip)"
+          register: git_username_prompt
+          when: git_config.needs_setup
 
-    - name: Prompt for Git user name
+        - name: Validate and set Git username
+          set_fact:
+            git_config: "{{ git_config | combine({
+              'username': git_username_prompt.user_input | default(git_config.username),
+              'needs_setup': false }) }}"
+          when: git_username_prompt.user_input is defined and git_username_prompt.user_input | trim != ''
+          
+        - name: Display Git username configuration status
+          debug:
+            msg: "Git username is now set to: {{ git_config.username }}"
+          when: not git_config.needs_setup
       become: false
-      pause:
-        prompt: "Enter your name for Git"
-      register: git_user_name_input
-      when: prompt_for_git_user_name
+      when: git_config.needs_setup
 
-    - name: Set Git user name from input
-      set_fact:
-        git_user_name: "{{ git_user_name_input.user_input }}"
-      when: prompt_for_git_user_name
-
-    - name: Check if git_user_email is set to default
-      set_fact:
-        prompt_for_git_user_email: "{{ git_user_email == 'set.your.email@example.com' }}"
-
-    - name: Prompt for Git user email
+    - name: "Git Configuration: Handle User Email"
+      block:
+        - name: Check if git email needs configuration
+          set_fact:
+            needs_email_config: "{{ git_user_email | default('set.your.email@example.com') == 'set.your.email@example.com' }}"
+    
+        - name: Collect Git user email
+          pause:
+            prompt: "Please enter your Git email address"
+          register: git_email_input
+          when: needs_email_config
+          
+        - name: Validate email format
+          assert:
+            that:
+              - git_email_input.user_input is match('^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$')
+            fail_msg: "Invalid email format. Please use a valid email address."
+          when: needs_email_config
+    
+        - name: Set Git user email
+          set_fact:
+            git_user_email: "{{ git_email_input.user_input }}"
+          when: needs_email_config
       become: false
-      pause:
-        prompt: "Enter your Git user email"
-      register: git_user_email_input
-      when: prompt_for_git_user_email
-
-    - name: Set Git user email from input
-      set_fact:
-        git_user_email: "{{ git_user_email_input.user_input }}"
-      when: prompt_for_git_user_email
+      tags:
+        - git
+        - config
 
   roles:
     - git_user

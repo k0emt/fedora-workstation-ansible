@@ -6,6 +6,8 @@
     - vars/git_user_vars.yml
     - vars/global_vars.yml
 
+  # TODO update pre-tasks once have workstation.yml working
+
   pre_tasks:
     - name: Check if git_user_name is set to default
       set_fact:
