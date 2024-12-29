@@ -13,38 +13,52 @@
       - thunderbird
     state: present
 
-- name: Ensure Pictures directory exists
-  file:
-    path: "/home/{{ ansible_user }}/Pictures/Wallpapers"
-    state: directory
+- name: Set up Wallpapers
+  become: false
+  block:
+    - name: Ensure Pictures directory exists
+      file:
+        path: "/home/{{ ansible_user }}/Pictures/Wallpapers"
+        state: directory
+      ignore_errors: true
 
-# copy background images from project's Wallpapers directory to user's Pictures directory
-- name: Copy background images
-  copy:
-    src: "{{ playbook_dir }}/Wallpapers/"
-    dest: "/home/{{ ansible_user }}/Pictures/Wallpapers/"
-    remote_src: no
+    - name: Copy background images
+      copy:
+        src: "{{ playbook_dir }}/Wallpapers/"
+        dest: "/home/{{ ansible_user }}/Pictures/Wallpapers/"
+        remote_src: no
+        force: no
+      ignore_errors: true
 
-# set the desktop wallpaper to something from the Wallpapers directory
-- name: Find first available wallpaper
-  find:
-    paths: "/home/{{ ansible_user }}/Pictures/Wallpapers"
-    patterns: 
-      - "*.jpeg"
-      - "*.jpg"
-      - "*.png"
-      - "*.webp"
-    file_type: file
-  register: wallpaper_files
+    - name: Find first available wallpaper
+      find:
+        paths: "/home/{{ ansible_user }}/Pictures/Wallpapers"
+        patterns:
+          - "*.jpeg"
+          - "*.jpg"
+          - "*.png"
+          - "*.webp"
+        file_type: file
+      register: wallpaper_files
+      failed_when: false
 
-- name: Pick a random wallpaper
-  when: wallpaper_files.matched > 0
-  set_fact:
-    random_wallpaper: "{{ wallpaper_files.files | random }}"
+    - name: Pick a random wallpaper
+      when: wallpaper_files.matched > 0
+      set_fact:
+        random_wallpaper: "{{ wallpaper_files.files | random }}"
+      failed_when: false
 
-- name: Set random wallpaper
-  when: wallpaper_files.matched > 0
-  shell: |
-    gsettings set org.gnome.desktop.background picture-uri "file://{{ random_wallpaper.path }}"
-    gsettings set org.gnome.desktop.background picture-uri-dark "file://{{ random_wallpaper.path }}"
-
+    - name: Set random wallpaper
+      when: wallpaper_files.matched > 0
+      shell: |
+        gsettings set org.gnome.desktop.background picture-uri "file://{{ random_wallpaper.path }}"
+        gsettings set org.gnome.desktop.background picture-uri-dark "file://{{ random_wallpaper.path }}"
+      ignore_errors: true
+  rescue:
+    - name: Wallpaper setup failed
+      debug:
+        msg: "Could not complete wallpaper setup."
+  always:
+    - name: Wallpaper setup block completed
+      debug:
+        msg: "Wallpaper setup block has finished."

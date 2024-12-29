@@ -7,34 +7,40 @@
     - vars/global_vars.yml
 
   pre_tasks:
-    - name: Get global git username
+    - name: Check existing Git configuration
       become: false
-      command: git config --global user.name
-      register: git_user_name
-      ignore_errors: true
-      changed_when: false
+      block:
+        - name: Get global git username
+          command: git config --global user.name
+          register: git_user_name
+          changed_when: false
 
-    - name: Get global git user email
-      become: false
-      command: git config --global user.email
-      register: git_user_email
-      ignore_errors: true
-      changed_when: false
+        - name: Get global git user email
+          command: git config --global user.email
+          register: git_user_email
+          changed_when: false
 
-    - name: Set initial git username state
-      set_fact:
-        existing_git_config:
-          username: "{{ git_user_name.stdout }}"
-          email: "{{ git_user_email.stdout }}"
+        - name: Set initial git username state
+          set_fact:
+            existing_git_config:
+              username: "{{ git_user_name.stdout }}"
+              email: "{{ git_user_email.stdout }}"
 
-    - name: Debug - git user variables
-      become: false
-      debug:
-        msg:
-          - "Git user configuration:"
-          - "Username: {{ existing_git_config.username }}"
-          - "Email: {{ existing_git_config.email }}"
+        - name: Debug - git user variables
+          debug:
+            msg:
+              - "Git user configuration:"
+              - "Username: {{ existing_git_config.username }}"
+              - "Email: {{ existing_git_config.email }}"
       ignore_errors: true
+      rescue:
+        - name: Handle Git config check failure
+          debug:
+            msg: "Failed to check existing Git configuration. Will continue with setup."
+      always:
+        - name: Ensure git config check completed
+          debug:
+            msg: "Git configuration check block completed"
 
     - name: Configure Git username
       become: false
