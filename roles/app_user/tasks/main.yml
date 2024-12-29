@@ -26,15 +26,20 @@
     remote_src: no
 
 # set the desktop wallpaper to something from the Wallpapers directory
+- name: Find first available wallpaper
+  find:
+    paths: "/home/{{ ansible_user }}/Pictures/Wallpapers"
+    patterns: 
+      - "*.jpeg"
+      - "*.jpg"
+      - "*.png"
+      - "*.webp"
+    file_type: file
+  register: wallpaper_files
+
 - name: Set desktop wallpaper
-  shell: gsettings set org.gnome.desktop.background picture-uri file://{{ home_dir }}/Pictures/Wallpapers/{{ item }}
-  with_first_found:
-    - files:
-        - "/home/{{ ansible_user }}/Pictures/Wallpapers/*.jpeg"
-        - "/home/{{ ansible_user }}/Pictures/Wallpapers/*.jpg"
-        - "/home/{{ ansible_user }}/Pictures/Wallpapers/*.png"
-        - "/home/{{ ansible_user }}/Pictures/Wallpapers/*.webp"
-      paths:
-        - "/"
-  # notify: reload gnome
+  when: wallpaper_files.matched > 0
+  shell: |
+    gsettings set org.gnome.desktop.background picture-uri "file://{{ wallpaper_files.files[0].path }}"
+    gsettings set org.gnome.desktop.background picture-uri-dark "file://{{ wallpaper_files.files[0].path }}"
 

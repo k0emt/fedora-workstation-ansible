@@ -8,10 +8,24 @@
   dnf:
     name:
       - pgcli
-      # - pgadmin4
       - mycli
       - valkey
       - valkey-doc
+    state: present
+
+# add repository for pgadmin4
+- name: Add pgadmin4 repository
+  become: true
+  dnf:
+    name: https://ftp.postgresql.org/pub/pgadmin/pgadmin4/yum/pgadmin4-fedora-repo-2-1.noarch.rpm
+    state: present
+
+- name: Install pgadmin4
+  become: true
+  dnf:
+    name: 
+      - pgadmin4
+      - pgadmin4-desktop
     state: present
 
 # TODO add a linked? task file for mongodb
