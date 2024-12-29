@@ -8,20 +8,19 @@
       - make
       - python3
       - python3-pip
-      - vim-enhanced
     state: present
 
-# TODO get this all working
+# TODO get nvm installed and latest node.js installed
 
 # - name: Install node version manager
 #   shell: curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.38.0/install.sh | bash
 #   args:
-#     creates: /home/{{ ansible_user_id }}/nvm
+#     creates: /home/{{ ansible_user }}/nvm
 
 # - name: Install node.js
-#   shell: source /home/{{ ansible_user_id }}/nvm/nvm.sh && nvm install node
+#   shell: source /home/{{ ansible_user }}/nvm/nvm.sh && nvm install node
 #   args:
-#     creates: /home/{{ ansible_user_id }}/.nvm
+#     creates: /home/{{ ansible_user }}/.nvm
 
 - name: Install golang
   become: true
@@ -61,7 +60,7 @@
 - name: Install ruby
   shell: rbenv install {{ ruby_version }}
   args:
-    creates: /home/{{ ansible_user_id }}/.rbenv/versions/{{ ruby_version }}
+    creates: /home/{{ ansible_user }}/.rbenv/versions/{{ ruby_version }}
 
 # set the global version of ruby to 3.1.2
 - name: Set global ruby version
@@ -71,9 +70,10 @@
 - name: Install rails
   shell: gem install rails
   args:
-    creates: /home/{{ ansible_user_id }}/.rbenv/versions/3.1.2/lib/ruby/gems/3.1.0/gems/rails-
+    creates: /home/{{ ansible_user }}/.rbenv/versions/3.1.2/lib/ruby/gems/3.1.0/gems/rails-
 
 # TODO - name: Install AWS cli tools
+# https://docs.aws.amazon.com/cli/latest/userguide/getting-started-install.html
 #   become: true
 #   dnf:
 #     name:

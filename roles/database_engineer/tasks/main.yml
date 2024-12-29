@@ -7,8 +7,8 @@
   become: true
   dnf:
     name:
-      # TODO - pgadmin4
       - pgcli
+      - pgadmin4
       - mycli
       - valkey
       - valkey-doc

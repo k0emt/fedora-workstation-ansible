@@ -17,6 +17,13 @@
       register: git_user_email
       ignore_errors: true
 
+    - name: Debug - are git user variables set
+      debug:
+        msg: 
+          - "Git user variables are set"
+          - "git_user_name: {{ git_user_name }}"
+          - "git_user_email: {{ git_user_email }}"
+
     - name: Set git_user_name variable
       set_fact:
         git_user_name: "{{ git_user_name.stdout if git_user_name.stdout else 'Set Your Git User Name' }}"
@@ -54,8 +61,8 @@
   roles:
     - git_user
     - power_user
-    - amateur_radio
     - app_user
+    - amateur_radio
     - developer
     - ai_researcher
     - database_engineer

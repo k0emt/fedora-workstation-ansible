@@ -43,19 +43,19 @@
 - name: Copy global git ignore file
   copy:
     src: "{{ playbook_dir }}/global-git-ignore.txt"
-    dest: "{{ ansible_env.HOME }}/.gitignore_global"
+    dest: "/home/{{ ansible_user }}/.gitignore_global"
 
 # set the global git ignore file
 - name: Set global git ignore file
-  command: git config --global core.excludesfile "{{ ansible_env.HOME }}/.gitignore_global"
+  command: git config --global core.excludesfile "/home/{{ ansible_user }}/.gitignore_global"
 
 # set up a directory for git repositories
 - name: Create git projects directory
-  file: path="{{ ansible_env.HOME }}/Projects" state=directory
+  file: path="/home/{{ ansible_user }}/Projects" state=directory
 
 # set up a directory for ssh keys
 - name: Create .ssh directory
-  file: path="{{ ansible_env.HOME }}/.ssh" state=directory
+  file: path="/home/{{ ansible_user }}/.ssh" state=directory
 
 # Debug before creating new ssh keys
 - name: Debug - Before creating new ssh keys
@@ -64,9 +64,9 @@
 
 # Loop through the SSH key names and create keys
 - name: Create new ssh keys
-  command: yes n | ssh-keygen -t ed25519 -C "{{ git_user_email }}" -f "{{ ansible_env.HOME }}/.ssh/id_ed25519_{{ item.name }}" -N ""
+  command: yes n | ssh-keygen -t ed25519 -C "{{ git_user_email }}" -f "/home/{{ ansible_user }}/.ssh/id_ed25519_{{ item.name }}" -N ""
   args:
-    creates: "{{ ansible_env.HOME }}/.ssh/id_ed25519_{{ item.name }}"
+    creates: "/home/{{ ansible_user }}/.ssh/id_ed25519_{{ item.name }}"
   loop: "{{ ssh_keys }}"
 
 # Debug after creating new ssh keys

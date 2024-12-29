@@ -32,27 +32,27 @@ sudo dnf install ansible
 To run the playbook on your local workstation, use the following command:
 
 ```shell
-ansible-playbook -i localhost, -c local workstation.yml --ask-become-pass
+ansible-playbook -i localhost, -c local workstation.yml --ask-become-pass -u YOUR_USERNAME
 ```
 
-For developer packages:
+For developer packages only:
 
 ```shell
-ansible-playbook -i localhost, -c local developer.yml --ask-become-pass
+ansible-playbook -i localhost, -c local developer.yml --ask-become-pass -u YOUR_USERNAME
 ```
 
 ### Install just one role
 
 To run with just one role, you can modify the workstation.yml file or duplicate it.
-The alter the duplicate to have only the roles you want to run.
-On the command line specify the duplicate file name.
+Alter the duplicated file to have only the roles you want to run.
+On the command line specify the new file name.
 
 ## Developer Information
 
 How to do a dry run of the playbook
 
 ```shell
-ansible-playbook -i localhost, -c local workstation.yml --check --ask-become-pass
+ansible-playbook -i localhost, -c local workstation.yml --check --ask-become-pass -u YOUR_USERNAME
 ```
 
 - [How to test in a WSL2 instance](wsl2-testing.md)
@@ -63,7 +63,7 @@ ansible-playbook -i localhost, -c local workstation.yml --check --ask-become-pas
 Tools, etc not installed:
 
 - app_user: slack, discord, zoom, edge
-- power_user: iosevka font
+- power_user: iosevka font, run `p10k configure` post install
 - developer: AWS CLI
 - developer: nvm - node version manager and a version of node
 - ai: TensorFlow as it should really be [installed in a virtual environment](https://idroot.us/install-tensorflow-fedora-41/).

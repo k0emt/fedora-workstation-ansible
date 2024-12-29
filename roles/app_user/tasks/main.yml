@@ -1,10 +1,11 @@
+---
 # tasks for installing user applications
-# TODO OBS Studio and OBS Virtual Camera < https://obsproject.com/ >
 - name: Install user applications
   become: true
   dnf:
     name:
       - audacity
+      - obs-studio
       - gimp
       - inkscape
       - krita
@@ -14,26 +15,26 @@
 
 - name: Ensure Pictures directory exists
   file:
-    path: "{{ home_dir }}/Pictures/Wallpapers"
+    path: "/home/{{ ansible_user }}/Pictures/Wallpapers"
     state: directory
 
 # copy background images from project's Wallpapers directory to user's Pictures directory
 - name: Copy background images
   copy:
     src: "{{ playbook_dir }}/Wallpapers/"
-    dest: "{{ home_dir }}/Pictures/Wallpapers/"
+    dest: "/home/{{ ansible_user }}/Pictures/Wallpapers/"
     remote_src: no
 
-# TODO: set the background image to the first image in the Wallpapers directory
-# - name: Set background image
-#   shell: gsettings set org.gnome.desktop.background picture-uri file://{{ home_dir }}/Pictures/Wallpapers/{{ item }}
-#   with_first_found:
-#     - files:
-#         - "*.jpeg"
-#         - "*.jpg"
-#         - "*.png"
-#         - "*.webp"
-#       paths:
-#         - "{{ home_dir }}/Pictures/Wallpapers/"
+# set the desktop wallpaper to something from the Wallpapers directory
+- name: Set desktop wallpaper
+  shell: gsettings set org.gnome.desktop.background picture-uri file://{{ home_dir }}/Pictures/Wallpapers/{{ item }}
+  with_first_found:
+    - files:
+        - "/home/{{ ansible_user }}/Pictures/Wallpapers/*.jpeg"
+        - "/home/{{ ansible_user }}/Pictures/Wallpapers/*.jpg"
+        - "/home/{{ ansible_user }}/Pictures/Wallpapers/*.png"
+        - "/home/{{ ansible_user }}/Pictures/Wallpapers/*.webp"
+      paths:
+        - "/"
   # notify: reload gnome
 
