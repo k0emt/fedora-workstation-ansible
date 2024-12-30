@@ -5,7 +5,7 @@
 
 - name: Install database clients and tools
   become: true
-  dnf:
+  ansible.builtin.dnf:
     name:
       - pgcli
       - mycli
@@ -16,15 +16,14 @@
 # add repository for pgadmin4
 - name: Add pgadmin4 repository
   become: true
-  dnf:
+  ansible.builtin.dnf:
     name: https://ftp.postgresql.org/pub/pgadmin/pgadmin4/yum/pgadmin4-fedora-repo-2-1.noarch.rpm
     state: present
 
 - name: Install pgadmin4
   become: true
-  dnf:
-    name: 
+  ansible.builtin.dnf:
+    name:
       - pgadmin4
       - pgadmin4-desktop
     state: present
-

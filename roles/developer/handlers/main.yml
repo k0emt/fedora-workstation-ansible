@@ -1,4 +1,4 @@
 ---
-# handler to reload zsh configuration
-- name: reload zsh
-  command: zsh -ic "source /home/{{ ansible_user }}/.zshrc"
+# handler to Reload zsh configuration
+- name: Reload zsh
+  ansible.builtin.command: zsh -ic "source /home/{{ ansible_user }}/.zshrc"

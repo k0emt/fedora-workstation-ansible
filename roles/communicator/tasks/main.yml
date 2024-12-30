@@ -4,32 +4,32 @@
 # make sure system has flatpak installed
 - name: Install flatpak
   become: true
-  dnf:
+  ansible.builtin.dnf:
     name: flatpak
     state: present
 
 - name: Install Slack
   become: true
-  flatpak:
+  community.general.flatpak:
     name: com.slack.Slack
     state: present
 
 - name: Install Discord
   become: true
-  flatpak:
+  community.general.flatpak:
     name: com.discordapp.Discord
     state: present
 
 - name: Install Zoom
   become: true
-  flatpak:
+  community.general.flatpak:
     name: us.zoom.Zoom
     state: present
 
 # make sure that the microsoft repo for edge is installed
 - name: Add Microsoft Edge repository
   become: true
-  copy:
+  ansible.builtin.copy:
     content: |
       [microsoft-edge]
       name=Microsoft Edge
@@ -41,6 +41,6 @@
 
 - name: Install Microsoft Edge
   become: true
-  dnf:
+  ansible.builtin.dnf:
     name: microsoft-edge-stable
     state: present
