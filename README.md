@@ -51,6 +51,13 @@ To run the playbook on your local workstation, use the following command:
 ansible-playbook -i localhost, -c local workstation.yml --ask-become-pass -u YOUR_USERNAME
 ```
 
+### Gotchas
+
+If you have already enrolled a fingerprint,
+this is likely to block the script from properly running.
+It can get stuck at gathering facts.
+Delete enrolled fingerprints and try to run again.
+
 ### Install Custom roles
 
 To run with selected roles, you can modify the `workstation.yml` file or duplicate it.
