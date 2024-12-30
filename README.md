@@ -75,10 +75,6 @@ Install [dBeaver]( https://dbeaver.io/download/)
 
 Install [AWS CLI]( https://docs.aws.amazon.com/cli/latest/userguide/getting-started-install.html)
 
-## TODO
-
-Lint everything and make sure it is all idiomatic.
-
 ## Developer Information
 
 How to do a dry run of the playbook
