@@ -41,25 +41,23 @@
   block:
     # add a line to .zshrc to load rbenv
     - name: Add rbenv to .zshrc
-      lineinfile:
+      ansible.builtin.lineinfile:
         path: /home/{{ ansible_user }}/.zshrc
-        regexp: '^eval "\$\(rbenv init -\)"'
-        line: 'eval "$(rbenv init -)"'
+        regexp: ^eval "\$\(rbenv init -\)"
+        line: eval "$(rbenv init -)"
       notify: Reload zsh
 
     # install latest version of ruby with rbenv
     - name: Install ruby
-      shell: rbenv install {{ ruby_version }}
+      ansible.builtin.command: rbenv install {{ ruby_version }}
       args:
         creates: /home/{{ ansible_user }}/.rbenv/versions/{{ ruby_version }}
 
     # set the global version of ruby to 3.1.2
     - name: Set global ruby version
-      shell: rbenv global 3.1.2
-
-    # install rails
+      ansible.builtin.command: rbenv global 3.1.2
     - name: Install rails
-      shell: gem install rails
+      ansible.builtin.command: gem install rails
       args:
         creates: /home/{{ ansible_user }}/.rbenv/versions/3.1.2/lib/ruby/gems/3.1.0/gems/rails-
 
@@ -79,16 +77,15 @@
 
 - name: Install podman-desktop
   become: false
-  command: flatpak install flathub io.podman_desktop.PodmanDesktop
-
+  ansible.builtin.command: flatpak install flathub io.podman_desktop.PodmanDesktop
 - name: Add Microsoft GPG key
-  rpm_key:
+  ansible.builtin.rpm_key:
     state: present
     key: https://packages.microsoft.com/keys/microsoft.asc
 
 - name: Add VS Code repository
   become: true
-  copy:
+  ansible.builtin.copy:
     content: |
       [code]
       name=Visual Studio Code
@@ -106,4 +103,4 @@
 
 - name: Install gitnuro (git GUI)
   become: false
-  command: flatpak install flathub com.jetpackduba.Gitnuro
+  ansible.builtin.command: flatpak install flathub com.jetpackduba.Gitnuro

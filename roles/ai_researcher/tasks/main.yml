@@ -12,14 +12,14 @@
 
 - name: Upgrade pip
   become: false
-  pip:
-    name: 
+  ansible.builtin.pip:
+    name:
       - pip
     extra_args: --upgrade
 
 - name: Install AI Python packages
   become: false
-  pip:
+  ansible.builtin.pip:
     name:
       - numpy
       - pandas

@@ -13,58 +13,58 @@
       ignore_errors: true
       block:
         - name: Get global git username
-          command: git config --global user.name
+          ansible.builtin.command: git config --global user.name
           register: git_user_name
           changed_when: false
 
         - name: Get global git user email
-          command: git config --global user.email
+          ansible.builtin.command: git config --global user.email
           register: git_user_email
           changed_when: false
 
         - name: Set initial git username state
-          set_fact:
+          ansible.builtin.set_fact:
             existing_git_config:
               username: "{{ git_user_name.stdout }}"
               email: "{{ git_user_email.stdout }}"
 
         - name: Debug - git user variables
-          debug:
+          ansible.builtin.debug:
             msg:
               - "Git user configuration:"
               - "Username: {{ existing_git_config.username }}"
               - "Email: {{ existing_git_config.email }}"
       rescue:
         - name: Handle Git config check failure
-          debug:
-            msg: "Failed to check existing Git configuration. Will continue with setup."
+          ansible.builtin.debug:
+            msg: Failed to check existing Git configuration. Will continue with setup.
       always:
         - name: Ensure git config check completed
-          debug:
-            msg: "Git configuration check block completed"
+          ansible.builtin.debug:
+            msg: Git configuration check block completed
 
     - name: Configure Git username
       become: false
       block:
         - name: Check if git username needs configuration
-          set_fact:
+          ansible.builtin.set_fact:
             needs_setup: "{{ existing_git_config.username | length == 0 }}"
 
         - name: Prompt for Git username
-          pause:
-            prompt: "Please enter your full name for Git configuration (leave empty to skip)"
+          ansible.builtin.pause:
+            prompt: Please enter your full name for Git configuration (leave empty to skip)
           register: git_username_prompt
           when: needs_setup
 
         - name: Set Git username
-          command: "git config --global user.name '{{ git_username_prompt.user_input }}'"
-          when: 
-            - needs_setup 
+          ansible.builtin.command: git config --global user.name '{{ git_username_prompt.user_input }}'
+          when:
+            - needs_setup
             - git_username_prompt.user_input | length > 0
       rescue:
         - name: Handle Git config failure
-          debug:
-            msg: "Failed to configure Git username. Please configure manually."
+          ansible.builtin.debug:
+            msg: Failed to configure Git username. Please configure manually.
 
     - name: "Git Configuration: Handle User Email"
       become: false
@@ -73,29 +73,29 @@
         - config
       block:
         - name: Check if git email needs configuration
-          set_fact:
+          ansible.builtin.set_fact:
             needs_email_config: "{{ existing_git_config.email | length == 0 }}"
-    
+
         - name: Collect Git user email
-          pause:
-            prompt: "Please enter your Git email address"
+          ansible.builtin.pause:
+            prompt: Please enter your Git email address
           register: git_email_input
           when: needs_email_config
-          
+
         - name: Validate email format
-          assert:
+          ansible.builtin.assert:
             that:
               - git_email_input.user_input is match('^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$')
-            fail_msg: "Invalid email format. Please use a valid email address."
+            fail_msg: Invalid email format. Please use a valid email address.
           when: needs_email_config
 
         - name: Set Git user email
-          set_fact:
+          ansible.builtin.set_fact:
             git_user_email: "{{ git_email_input.user_input }}"
           when: needs_email_config
 
         - name: Configure Git user email
-          git_config:
+          community.general.git_config:
             name: user.email
             scope: global
             value: "{{ git_user_email }}"
