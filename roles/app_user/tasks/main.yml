@@ -2,16 +2,24 @@
 # tasks for installing user applications
 - name: Install user applications
   become: true
-  dnf:
-    name:
-      - audacity
-      - obs-studio
-      - gimp
-      - inkscape
-      - krita
-      - hexchat
-      - thunderbird
-    state: present
+  block:
+    - name: Install media applications
+      ansible.builtin.dnf:
+        name: "{{ item }}"
+        state: present
+      loop: "{{ media_apps }}"
+
+    - name: Install graphics applications
+      ansible.builtin.dnf:
+        name: "{{ item }}"
+        state: present
+      loop: "{{ graphics_apps }}"
+
+    - name: Install communication applications
+      ansible.builtin.dnf:
+        name: "{{ item }}"
+        state: present
+      loop: "{{ communication_apps }}"
 
 - name: Set up Wallpapers
   become: false
@@ -20,15 +28,16 @@
       file:
         path: "/home/{{ ansible_user }}/Pictures/Wallpapers"
         state: directory
-      ignore_errors: true
+      failed_when: false
 
     - name: Copy background images
       copy:
         src: "{{ playbook_dir }}/Wallpapers/"
         dest: "/home/{{ ansible_user }}/Pictures/Wallpapers/"
-        remote_src: no
-        force: no
-      ignore_errors: true
+        remote_src: false
+        force: false
+        mode: '0644'
+      failed_when: false
 
     - name: Find first available wallpaper
       find:

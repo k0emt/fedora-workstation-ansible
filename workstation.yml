@@ -1,5 +1,6 @@
 ---
-- hosts: localhost
+- name: Configure workstation
+  hosts: localhost
   become: true
 
   vars_files:
@@ -9,6 +10,7 @@
   pre_tasks:
     - name: Check existing Git configuration
       become: false
+      ignore_errors: true
       block:
         - name: Get global git username
           command: git config --global user.name
@@ -32,7 +34,6 @@
               - "Git user configuration:"
               - "Username: {{ existing_git_config.username }}"
               - "Email: {{ existing_git_config.email }}"
-      ignore_errors: true
       rescue:
         - name: Handle Git config check failure
           debug:
@@ -67,6 +68,9 @@
 
     - name: "Git Configuration: Handle User Email"
       become: false
+      tags:
+        - git
+        - config
       block:
         - name: Check if git email needs configuration
           set_fact:
@@ -84,7 +88,7 @@
               - git_email_input.user_input is match('^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$')
             fail_msg: "Invalid email format. Please use a valid email address."
           when: needs_email_config
-    
+
         - name: Set Git user email
           set_fact:
             git_user_email: "{{ git_email_input.user_input }}"
@@ -96,9 +100,6 @@
             scope: global
             value: "{{ git_user_email }}"
           when: needs_email_config
-      tags:
-        - git
-        - config
 
   roles:
     - git_user

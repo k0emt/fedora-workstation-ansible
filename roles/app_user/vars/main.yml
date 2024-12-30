@@ -1,0 +1,12 @@
+media_apps:
+  - audacity
+  - obs-studio
+
+graphics_apps:
+  - gimp
+  - inkscape
+  - krita
+
+communication_apps:
+  - hexchat
+  - thunderbird
