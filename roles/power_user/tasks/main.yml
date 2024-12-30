@@ -71,6 +71,14 @@
         line: plugins=(git aws web-search encode64 zsh-autosuggestions zsh-syntax-highlighting)
       notify: Reload zsh
 
+    - name: Add user home bin to path
+      ansible.builtin.lineinfile:
+        path: /home/{{ ansible_user }}/.zshrc
+        regexp: '^export PATH='
+        line: 'export PATH=$PATH:/home/{{ ansible_user }}/bin'
+        create: yes
+      notify: Reload zsh
+
 - name: Install power user packages
   ansible.builtin.dnf:
     name: "{{ item }}"
