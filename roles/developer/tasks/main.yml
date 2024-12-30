@@ -34,6 +34,7 @@
     name:
       - rbenv
       - ruby-build
+      - ruby-devel
     state: present
 
 - name: Ruby environment setup
@@ -77,7 +78,8 @@
 
 - name: Install podman-desktop
   become: false
-  ansible.builtin.command: flatpak install flathub io.podman_desktop.PodmanDesktop
+  ansible.builtin.command: flatpak install -y flathub io.podman_desktop.PodmanDesktop
+
 - name: Add Microsoft GPG key
   ansible.builtin.rpm_key:
     state: present
@@ -103,4 +105,4 @@
 
 - name: Install gitnuro (git GUI)
   become: false
-  ansible.builtin.command: flatpak install flathub com.jetpackduba.Gitnuro
+  ansible.builtin.command: flatpak install -y flathub com.jetpackduba.Gitnuro

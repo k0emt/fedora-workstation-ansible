@@ -16,9 +16,8 @@
 # add repository for pgadmin4
 - name: Add pgadmin4 repository
   become: true
-  ansible.builtin.dnf:
-    name: https://ftp.postgresql.org/pub/pgadmin/pgadmin4/yum/pgadmin4-fedora-repo-2-1.noarch.rpm
-    state: present
+  ansible.builtin.command:
+    cmd: dnf install -y https://ftp.postgresql.org/pub/pgadmin/pgadmin4/yum/pgadmin4-fedora-repo-2-1.noarch.rpm
 
 - name: Install pgadmin4
   become: true
