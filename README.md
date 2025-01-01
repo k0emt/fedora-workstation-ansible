@@ -6,7 +6,7 @@ This project contains ansible resources for setting up a new Fedora workstation.
 
 Roles that will be setup are:
 
-- Git User: git, gitk, git-gui, user configuration
+- Git User: git, gitk, git-gui, user configuration, ssh keys
 - Power User:
   - zsh, oh-my-zsh, extensions, powerlevel10k, plugins
   - numerous command line tools
@@ -45,7 +45,10 @@ sudo dnf install ansible
 
 ## Running the playbook
 
-To run the playbook on your local workstation, use the following command:
+- Clone the repo onto your computer.
+- It is fine to use https at this point.
+- Change into the cloned directory.
+- To run the playbook on your local workstation, use the following command:
 
 ```shell
 ansible-playbook -i localhost, -c local workstation.yml --ask-become-pass -u YOUR_USERNAME
@@ -54,9 +57,11 @@ ansible-playbook -i localhost, -c local workstation.yml --ask-become-pass -u YOU
 ### Gotchas
 
 If you have already enrolled a fingerprint,
-this is likely to block the script from properly running.
+this is likely to block the playbook from properly running.
 It can get stuck at gathering facts.
-Delete enrolled fingerprints and try to run again.
+_Delete enrolled fingerprints and try to run again._
+
+If there is a failure downloaded during a task, simply run the playbook again.
 
 ### Install Custom roles
 
@@ -90,5 +95,16 @@ How to do a dry run of the playbook
 ansible-playbook -i localhost, -c local workstation.yml --check --ask-become-pass -u YOUR_USERNAME
 ```
 
+### Testing with WSL2 or a container
+
 - [How to test in a WSL2 instance](wsl2-testing.md)
-- [How to test with a container](container.md)
+- [How to test with a container](container.md) _not functional_
+
+### Testing using Virtualization
+
+You can use Boxes on a Fedora Workstation.
+Or if you have a Windows Pro OS you can use Hyper-V.
+Create a VM with a clean instance of Fedora Workstation.
+To test your changes, clone down your forked repo.
+Switch to the appropriate branch and test installing
+
