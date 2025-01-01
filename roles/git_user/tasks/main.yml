@@ -67,7 +67,8 @@
 
     # Loop through the SSH key names and create keys
     - name: Create new ssh keys
-      ansible.builtin.command: yes n | ssh-keygen -t ed25519 -C "{{ git_user_email }}" -f "/home/{{ ansible_user }}/.ssh/id_ed25519_{{ item.name }}" -N ""
+      ansible.builtin.shell:
+        cmd: ssh-keygen -t ed25519 -C "{{ git_user_email }}" -f "/home/{{ ansible_user }}/.ssh/id_ed25519_{{ item.name }}" -N "" -q
       args:
         creates: /home/{{ ansible_user }}/.ssh/id_ed25519_{{ item.name }}
       loop: "{{ ssh_keys }}"
