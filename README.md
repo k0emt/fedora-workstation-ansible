@@ -61,7 +61,7 @@ this is likely to block the playbook from properly running.
 It can get stuck at gathering facts.
 _Delete enrolled fingerprints and try to run again._
 
-If there is a failure downloaded during a task, simply run the playbook again.
+If there is a failure downloading during a task, simply run the playbook again.
 
 ### Install Custom roles
 
