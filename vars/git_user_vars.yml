@@ -1,8 +1,0 @@
-git_user_name: ""
-git_user_email: ""
-
-# Define the SSH key names
-ssh_keys:
-  - name: github
-  - name: gitlab
-  - name: bitbucket

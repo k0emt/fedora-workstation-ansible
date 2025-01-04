@@ -1,0 +1,50 @@
+---
+- name: Ruby and rails environment setup
+  become: false
+  block:
+    - name: Install rbenv
+      become: true
+      ansible.builtin.dnf:
+        name:
+          - rbenv
+          - ruby-build
+          - ruby-devel
+        state: present
+
+    - name: Add rbenv to .zshrc
+      ansible.builtin.lineinfile:
+        path: /home/{{ ansible_user }}/.zshrc
+        regexp: ^eval "\$\(rbenv init -\)"
+        line: eval "$(rbenv init -)"
+      notify: Reload zsh
+
+    - name: Install ruby
+      ansible.builtin.command: rbenv install {{ ruby_version }}
+      args:
+        creates: /home/{{ ansible_user }}/.rbenv/versions/{{ ruby_version }}
+
+    - name: Set global ruby version
+      ansible.builtin.command: rbenv global {{ ruby_version }}
+      
+    - name: Check installed Rails version
+      ansible.builtin.shell: |
+        if gem list -i '^rails$' > /dev/null; then
+          rails_version=$(rails -v | awk '{print $2}')
+          if [ "$(printf '%s\n' "{{ rails_version }}" "$rails_version" | sort -V | head -n1)" = "{{ rails_version }}" ]; then
+            echo "Rails version is greater than or equal to {{ rails_version }}"
+          else
+            echo "Rails version is less than {{ rails_version }}"
+            exit 1
+          fi
+        else
+          echo "Rails is not installed"
+          exit 1
+        fi
+      register: rails_check
+      ignore_errors: yes
+
+    - name: Install rails
+      ansible.builtin.command: gem install rails -v ">= {{ rails_version }}"
+      when: 
+        - rails_check.rc != 0
+        - rails_version is defined

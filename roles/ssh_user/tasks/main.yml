@@ -1,0 +1,42 @@
+---
+# tasks file for roles/ssh_user
+- name: Configure SSH environment
+  become: false
+  block:
+    # set up a directory for ssh keys
+    - name: Create .ssh directory
+      ansible.builtin.file:
+        path: /home/{{ ansible_user }}/.ssh
+        state: directory
+        mode: "0700" # recommended for .ssh directory
+
+    # Debug before creating new ssh keys
+    - name: Debug - Before creating new ssh keys
+      ansible.builtin.debug:
+        msg: Creating new ssh keys for {{ git_user_email }}
+
+    # Loop through the SSH key names and create keys
+    - name: Create new ssh keys
+      ansible.builtin.shell:
+        cmd: ssh-keygen -t ed25519 -C "{{ git_user_email }}" -f "/home/{{ ansible_user }}/.ssh/id_ed25519_{{ target_system }}" -N "" -q
+      args:
+        creates: /home/{{ ansible_user }}/.ssh/id_ed25519_{{ target_system }}
+      loop: "{{ ssh_keys }}"
+      loop_control:
+        loop_var: target_system
+
+    - name: Debug - After creating new ssh keys
+      ansible.builtin.debug:
+        msg: Finished creating new ssh keys
+
+    # Add the new SSH keys to the SSH agent
+    - name: Debug - Before registering ssh keys
+      ansible.builtin.debug:
+        msg: Registering ssh keys
+
+    - name: Add new ssh keys to ssh-agent
+      ansible.builtin.shell:
+        cmd: ssh-add /home/{{ ansible_user }}/.ssh/id_ed25519_{{ target_system }}
+      loop: "{{ ssh_keys }}"
+      loop_control:
+        loop_var: target_system

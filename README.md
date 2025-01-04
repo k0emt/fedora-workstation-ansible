@@ -51,7 +51,7 @@ sudo dnf install ansible
 - To run the playbook on your local workstation, use the following command:
 
 ```shell
-ansible-playbook -i localhost, -c local workstation.yml --ask-become-pass -u YOUR_USERNAME
+ansible-playbook -i localhost, -c local workstation.yml --ask-become-pass
 ```
 
 ### Gotchas
@@ -92,7 +92,7 @@ Install [AWS CLI]( https://docs.aws.amazon.com/cli/latest/userguide/getting-star
 How to do a dry run of the playbook
 
 ```shell
-ansible-playbook -i localhost, -c local workstation.yml --check --ask-become-pass -u YOUR_USERNAME
+ansible-playbook -i localhost, -c local workstation.yml --check --ask-become-pass
 ```
 
 ### Testing with WSL2 or a container

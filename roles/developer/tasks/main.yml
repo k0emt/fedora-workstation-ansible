@@ -27,40 +27,7 @@
       - erlang-doc
     state: present
 
-# install ruby and rails with rbenv
-- name: Install rbenv
-  become: true
-  ansible.builtin.dnf:
-    name:
-      - rbenv
-      - ruby-build
-      - ruby-devel
-    state: present
-
-- name: Ruby environment setup
-  become: false
-  block:
-    # add a line to .zshrc to load rbenv
-    - name: Add rbenv to .zshrc
-      ansible.builtin.lineinfile:
-        path: /home/{{ ansible_user }}/.zshrc
-        regexp: ^eval "\$\(rbenv init -\)"
-        line: eval "$(rbenv init -)"
-      notify: Reload zsh
-
-    # install latest version of ruby with rbenv
-    - name: Install ruby
-      ansible.builtin.command: rbenv install {{ ruby_version }}
-      args:
-        creates: /home/{{ ansible_user }}/.rbenv/versions/{{ ruby_version }}
-
-    # set the global version of ruby to 3.1.2
-    - name: Set global ruby version
-      ansible.builtin.command: rbenv global 3.1.2
-    - name: Install rails
-      ansible.builtin.command: gem install rails
-      args:
-        creates: /home/{{ ansible_user }}/.rbenv/versions/3.1.2/lib/ruby/gems/3.1.0/gems/rails-
+- import_tasks: ruby_and_rails.yml
 
 - name: Install flatpack
   become: true
@@ -68,6 +35,10 @@
     name:
       - flatpak
     state: present
+
+- name: Install gitnuro (git GUI)
+  become: false
+  ansible.builtin.command: flatpak install -y flathub com.jetpackduba.Gitnuro
 
 - name: Install podman
   become: true
@@ -79,30 +50,5 @@
 - name: Install podman-desktop
   become: false
   ansible.builtin.command: flatpak install -y flathub io.podman_desktop.PodmanDesktop
-
-- name: Add Microsoft GPG key
-  ansible.builtin.rpm_key:
-    state: present
-    key: https://packages.microsoft.com/keys/microsoft.asc
-
-- name: Add VS Code repository
-  become: true
-  ansible.builtin.copy:
-    content: |
-      [code]
-      name=Visual Studio Code
-      baseurl=https://packages.microsoft.com/yumrepos/vscode
-      enabled=1
-      gpgcheck=1
-      gpgkey=https://packages.microsoft.com/keys/microsoft.asc
-    dest: /etc/yum.repos.d/vscode.repo
-
-- name: Install VS Code
-  become: true
-  ansible.builtin.dnf:
-    name: code
-    state: present
-
-- name: Install gitnuro (git GUI)
-  become: false
-  ansible.builtin.command: flatpak install -y flathub com.jetpackduba.Gitnuro
+ 
+- import_tasks: vs_code.yml
