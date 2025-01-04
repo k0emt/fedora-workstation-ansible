@@ -1,0 +1,27 @@
+---
+- name: Install VS Code
+  become: false
+  block:
+    - name: Add Microsoft GPG key
+      ansible.builtin.rpm_key:
+        state: present
+        key: https://packages.microsoft.com/keys/microsoft.asc
+
+    - name: Add VS Code repository
+      become: true
+      ansible.builtin.copy:
+        content: |
+          [code]
+          name=Visual Studio Code
+          baseurl=https://packages.microsoft.com/yumrepos/vscode
+          enabled=1
+          gpgcheck=1
+          gpgkey=https://packages.microsoft.com/keys/microsoft.asc
+        dest: /etc/yum.repos.d/vscode.repo
+
+    - name: Install VS Code
+      become: true
+      ansible.builtin.dnf:
+        name: code
+        state: present
+  when: ansible_os_family == "RedHat"

@@ -1,0 +1,15 @@
+---
+# vars file for roles/ssh_user
+# Define the SSH key names
+ssh_keys:
+  - github
+  - gitlab
+  - bitbucket
+  - aws
+  - azure
+  - gcp
+  - digitalocean
+  - linode
+  - heroku
+  - oracle
+  - ibm

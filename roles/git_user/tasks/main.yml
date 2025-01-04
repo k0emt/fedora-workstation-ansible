@@ -1,4 +1,7 @@
 ---
+- name: Include pre-tasks
+  include_tasks: pre_tasks/pre_tasks.yml
+
 # install git
 
 - name: Debug - top of file
@@ -23,11 +26,8 @@
 - name: Configure Git settings
   become: false
   block:
-    # - name: Configure Git user name
-    #   command: git config --global user.name "{{ git_user_name }}"
 
-    # - name: Configure Git user email
-    #   command: git config --global user.email "{{ git_user_email }}"
+    # global config of user.name and user.email are done in the pre_tasks
 
     - name: Set default Git branch to main
       ansible.builtin.command: git config --global init.defaultBranch main
@@ -49,30 +49,3 @@
       ansible.builtin.file:
         path: /home/{{ ansible_user }}/Projects
         state: directory
-
-- name: Configure SSH environment
-  become: false
-  block:
-    # set up a directory for ssh keys
-    - name: Create .ssh directory
-      ansible.builtin.file:
-        path: /home/{{ ansible_user }}/.ssh
-        state: directory
-        mode: "0700" # recommended for .ssh directory
-
-    # Debug before creating new ssh keys
-    - name: Debug - Before creating new ssh keys
-      ansible.builtin.debug:
-        msg: Creating new ssh keys
-
-    # Loop through the SSH key names and create keys
-    - name: Create new ssh keys
-      ansible.builtin.shell:
-        cmd: ssh-keygen -t ed25519 -C "{{ git_user_email }}" -f "/home/{{ ansible_user }}/.ssh/id_ed25519_{{ item.name }}" -N "" -q
-      args:
-        creates: /home/{{ ansible_user }}/.ssh/id_ed25519_{{ item.name }}
-      loop: "{{ ssh_keys }}"
-
-    - name: Debug - After creating new ssh keys
-      ansible.builtin.debug:
-        msg: Finished creating new ssh keys

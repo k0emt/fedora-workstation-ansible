@@ -4,105 +4,29 @@
   become: true
 
   vars_files:
-    - vars/git_user_vars.yml
     - vars/global_vars.yml
 
   pre_tasks:
-    - name: Check existing Git configuration
-      become: false
-      ignore_errors: true
-      block:
-        - name: Get global git username
-          ansible.builtin.command: git config --global user.name
-          register: git_user_name
-          changed_when: false
 
-        - name: Get global git user email
-          ansible.builtin.command: git config --global user.email
-          register: git_user_email
-          changed_when: false
-
-        - name: Set initial git username state
-          ansible.builtin.set_fact:
-            existing_git_config:
-              username: "{{ git_user_name.stdout }}"
-              email: "{{ git_user_email.stdout }}"
-
-        - name: Debug - git user variables
-          ansible.builtin.debug:
-            msg:
-              - "Git user configuration:"
-              - "Username: {{ existing_git_config.username }}"
-              - "Email: {{ existing_git_config.email }}"
-      rescue:
-        - name: Handle Git config check failure
-          ansible.builtin.debug:
-            msg: Failed to check existing Git configuration. Will continue with setup.
-      always:
-        - name: Ensure git config check completed
-          ansible.builtin.debug:
-            msg: Git configuration check block completed
-
-    - name: Configure Git username
+    - name: Set up ansible_user
       become: false
       block:
-        - name: Check if git username needs configuration
-          ansible.builtin.set_fact:
-            needs_setup: "{{ existing_git_config.username | length == 0 }}"
+      - name: Get current username
+        ansible.builtin.command: id -un
+        register: current_user
+        changed_when: false
 
-        - name: Prompt for Git username
-          ansible.builtin.pause:
-            prompt: Please enter your full name for Git configuration (leave empty to skip)
-          register: git_username_prompt
-          when: needs_setup
+      - name: Set ansible_user fact
+        ansible.builtin.set_fact:
+          ansible_user: "{{ current_user.stdout }}"
 
-        - name: Set Git username
-          ansible.builtin.command: git config --global user.name '{{ git_username_prompt.user_input }}'
-          when:
-            - needs_setup
-            - git_username_prompt.user_input | length > 0
-      rescue:
-        - name: Handle Git config failure
-          ansible.builtin.debug:
-            msg: Failed to configure Git username. Please configure manually.
-
-    - name: "Git Configuration: Handle User Email"
-      become: false
-      tags:
-        - git
-        - config
-      block:
-        - name: Check if git email needs configuration
-          ansible.builtin.set_fact:
-            needs_email_config: "{{ existing_git_config.email | length == 0 }}"
-
-        - name: Collect Git user email
-          ansible.builtin.pause:
-            prompt: Please enter your Git email address
-          register: git_email_input
-          when: needs_email_config
-
-        - name: Validate email format
-          ansible.builtin.assert:
-            that:
-              - git_email_input.user_input is match('^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$')
-            fail_msg: Invalid email format. Please use a valid email address.
-          when: needs_email_config
-
-        - name: Set Git user email
-          ansible.builtin.set_fact:
-            git_user_email: "{{ git_email_input.user_input }}"
-          when: needs_email_config
-
-        - name: Configure Git user email
-          community.general.git_config:
-            name: user.email
-            scope: global
-            value: "{{ git_user_email }}"
-          when: needs_email_config
+      - name: Debug ansible_user
+        ansible.builtin.debug:
+          msg: "Current user: {{ ansible_user }}"
 
   roles:
     - git_user
+    - ssh_user
     - power_user
     - app_user
     - amateur_radio
