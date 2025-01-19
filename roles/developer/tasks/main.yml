@@ -36,9 +36,27 @@
       - flatpak
     state: present
 
+- name: Add Flathub repository
+  become: false
+  ansible.builtin.command: flatpak --user remote-add --if-not-exists flathub https://flathub.org/repo/flathub.flatpakrepo
+
+- name: Update Flatpak repositories
+  become: false
+  ansible.builtin.command: flatpak --user update
+
 - name: Install gitnuro (git GUI)
   become: false
-  ansible.builtin.command: flatpak install -y flathub com.jetpackduba.Gitnuro
+  ansible.builtin.command: flatpak --user install -y flathub com.jetpackduba.Gitnuro
+  register: gitnuro_install
+  retries: 3
+  delay: 5
+  until: gitnuro_install is not failed
+  ignore_errors: true
+
+- name: Notify user if gitnuro installation failed
+  ansible.builtin.debug:
+    msg: "Gitnuro installation failed after 3 retries."
+  when: gitnuro_install is failed
 
 - name: Install podman
   become: true
@@ -49,6 +67,16 @@
 
 - name: Install podman-desktop
   become: false
-  ansible.builtin.command: flatpak install -y flathub io.podman_desktop.PodmanDesktop
- 
+  ansible.builtin.command: flatpak --user install -y flathub io.podman_desktop.PodmanDesktop
+  register: podman_desktop_install
+  retries: 3
+  delay: 5
+  until: podman_desktop_install is not failed
+  ignore_errors: true
+
+- name: Notify user if podman-desktop installation failed
+  ansible.builtin.debug:
+    msg: "Podman Desktop installation failed after 3 retries"
+  when: podman_desktop_install is failed
+
 - import_tasks: vs_code.yml

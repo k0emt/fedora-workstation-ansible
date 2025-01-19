@@ -1,0 +1,42 @@
+---
+
+- name: Install IOSevka fonts and dependencies
+  tags:
+    - fonts
+    - iosevka
+  become: true
+  block:
+    - name: Enhance dnf so we can use copr
+      ansible.builtin.dnf:
+        name: dnf-plugins-core
+        state: present
+
+    - name: Enable copr repository for IOSevka font
+      ansible.builtin.command:
+        cmd: dnf copr enable -y peterwu/iosevka
+      register: copr_result
+      changed_when: "'Already enabled' not in copr_result.stdout"
+      failed_when: false
+
+    - name: Install IOSevka fonts
+      ansible.builtin.dnf:
+        name:
+          - iosevka-fixed-ss04-fonts
+          - iosevka-term-ss04-fonts
+        state: present
+      register: font_install
+      ignore_errors: true
+
+  rescue:
+    - name: Handle font installation failure
+      ansible.builtin.debug:
+        msg: Failed to install IOSevka fonts. Continuing with playbook execution.
+    - name: Set fact for font installation status
+      ansible.builtin.set_fact:
+        iosevka_installed: false
+
+  always:
+    - name: Clean dnf cache
+      become: true
+      ansible.builtin.command: dnf clean expire-cache
+      changed_when: false

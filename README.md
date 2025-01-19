@@ -4,22 +4,25 @@
 
 This project contains ansible resources for setting up a new Fedora workstation.
 
-Roles that will be setup are:
+The following roles will be set up, with descriptions providing a minimum of what will be installed:
 
-- Git User: git, gitk, git-gui, user configuration, ssh keys
-- Power User:
-  - zsh, oh-my-zsh, extensions, powerlevel10k, plugins
-  - numerous command line tools
-    - btop, bat, eza, fzf, mc, fastfetch, tldr, tmux, tree, vim, wget...
-  - .vimrc file
-  - IOSevka fonts installed
-- App User: audacity, OBS studio, gimp,inkscape, krita, hexchat, thunderbird
-  - Wallpapers
-- Amateur Radio: QRQ, OpenSCAD, kiCAD
-- Developer: gcc, make, python3, go lang, elixir, rbenv, ruby, rails, podman, podman desktop, VS Code, gitnuro
-- AI researcher: gcc, git, python3, numpy, pandas, scikit-learn, keras, matplotlib, ggplot, bokeh
-- Database Engineer: pgcli, pgadmin4-desktop, valkey, valkey-doc
-- Communicator: Slack, Discord, Zoom, Edge
+- [Git User](roles/git_user/tasks/main.yml): git, gitk, git-gui, user configuration
+- [SSH User](roles/ssh_user/tasks/main.yml): Creates a bunch of [ssh keys for you](roles/ssh_user/vars/main.yml) to use.  Optional system variable for if you want to register keys.  **Key management is left to you.**
+- [Power User](roles/power_user/):
+  - [zsh tasks](roles/power_user/tasks/zsh.yml): zsh, oh-my-zsh, extensions, powerlevel10k, plugins
+  - numerous [command line tools](roles/power_user/vars/main.yml)
+    - bat, eza, fzf, mc, tldr, tmux, tree, vim, wget
+  - [system information, monitoring, and performance tools](roles/power_user/vars/main.yml)
+    - fastfetch, process, i/o, and GPU monitoring
+  - [.vimrc file](static-content/vimrc)
+  - [IOSevka fonts](roles/power_user/tasks/iosevka-font.yml) for terminals
+- [App User](roles/app_user/tasks/main.yml): audio and video redcording, email
+  - [Wallpapers](Wallpapers)
+- [Amateur Radio](roles/amateur_radio/tasks/main.yml): QRQ, OpenSCAD, kiCAD, Ngspice, SDR software
+- [Developer](roles/developer/tasks/main.yml): gcc, python3, go lang, elixir, ruby, podman, VS Code, gitnuro
+- [AI researcher](roles/ai_researcher/tasks/main.yml): numpy, pandas, scikit-learn, keras, matplotlib, ggplot, bokeh
+- [Database Engineer](roles/database_engineer/tasks/main.yml): pgcli, pgadmin4-desktop, valkey, valkey-doc
+- [Communicator](roles/communicator/tasks/main.yml): Slack, Discord, Zoom, Edge
 
 ## Project Structure
 

@@ -29,14 +29,18 @@
       ansible.builtin.debug:
         msg: Finished creating new ssh keys
 
-    # Add the new SSH keys to the SSH agent
+    # Add the new SSH keys to the SSH agent (optional)
     - name: Debug - Before registering ssh keys
       ansible.builtin.debug:
         msg: Registering ssh keys
+      when: add_ssh_keys_to_agent | default(false)
 
     - name: Add new ssh keys to ssh-agent
       ansible.builtin.shell:
-        cmd: ssh-add /home/{{ ansible_user }}/.ssh/id_ed25519_{{ target_system }}
+        cmd: |
+          eval "$(ssh-agent -s)"
+          ssh-add /home/{{ ansible_user }}/.ssh/id_ed25519_{{ target_system }}
       loop: "{{ ssh_keys }}"
       loop_control:
         loop_var: target_system
+      when: add_ssh_keys_to_agent | default(false)
