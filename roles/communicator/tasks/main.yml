@@ -13,18 +13,48 @@
   community.general.flatpak:
     name: com.slack.Slack
     state: present
+  register: slack_install
+  retries: 3
+  delay: 5
+  until: slack_install is not failed
+  ignore_errors: true
+
+- name: Notify user if Slack installation failed
+  ansible.builtin.debug:
+    msg: "Slack installation failed after 3 retries."
+  when: slack_install is failed
 
 - name: Install Discord
   become: true
   community.general.flatpak:
     name: com.discordapp.Discord
     state: present
+  register: discord_install
+  retries: 3
+  delay: 5
+  until: discord_install is not failed
+  ignore_errors: true
+
+- name: Notify user if Discord installation failed
+  ansible.builtin.debug:
+    msg: "Discord installation failed after 3 retries."
+  when: discord_install is failed
 
 - name: Install Zoom
   become: true
   community.general.flatpak:
     name: us.zoom.Zoom
     state: present
+  register: zoom_install
+  retries: 3
+  delay: 5
+  until: zoom_install is not failed
+  ignore_errors: true
+
+- name: Notify user if Zoom installation failed
+  ansible.builtin.debug:
+    msg: "Zoom installation failed after 3 retries."
+  when: zoom_install is failed
 
 # make sure that the microsoft repo for edge is installed
 - name: Add Microsoft Edge repository

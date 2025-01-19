@@ -7,4 +7,7 @@
       - qrq
       - openscad
       - kicad
+      - ngspice
+      - gqrx
+      - fldigi
     state: present

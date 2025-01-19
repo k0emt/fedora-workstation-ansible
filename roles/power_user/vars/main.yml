@@ -1,14 +1,11 @@
 ---
 power_user_packages:
-  - btop
   - bat
   - curl
   - eza
   - fzf
-  - htop
   - jq
   - mc
-  - fastfetch
   - rsync
   - tldr
   - tmux
@@ -18,3 +15,29 @@ power_user_packages:
   - vim-enhanced
   - wget
   - zip
+
+monitoring_and_performance:
+  - name: "fastfetch"
+    description: "A fast, simple system information tool written in Rust."
+  - name: "atop"
+    description: "A system and process monitor that provides a more detailed view of system resource usage."
+  - name: "btop"
+    description: "A resource monitor that shows usage and stats for processor, memory, disks, network, and processes."
+  - name: "htop"
+    description: "An interactive process viewer for Unix systems."
+
+  - name: "iftop"
+    description: "A real-time console-based network bandwidth monitoring tool."
+  - name: "iotop-c"
+    description: "A Python program with a top-like interface that shows which processes are consuming the most I/O resources."
+  - name: "nload"
+    description: "A console application that monitors network traffic and bandwidth usage in real-time."
+  - name: "wavemon"
+    description: "A ncurses-based monitoring application for wireless network devices."
+
+  - name: "nvtop"
+    description: "A real-time GPU usage monitor for NVIDIA GPUs."
+  - name: "perf"
+    description: "A performance analyzing tool in Linux, providing a rich set of commands to collect and analyze performance and trace data."
+  - name: "powertop"
+    description: "A Linux tool to diagnose issues with power consumption and power management."
