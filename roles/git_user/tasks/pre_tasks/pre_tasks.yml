@@ -52,11 +52,6 @@
       register: git_username_prompt
       when: needs_setup
 
-    - name: Set Git username
-      ansible.builtin.command: git config --global user.name '{{ git_username_prompt.user_input }}'
-      when:
-        - needs_setup
-        - git_username_prompt.user_input | length > 0
   rescue:
     - name: Handle Git config failure
       ansible.builtin.debug:
@@ -83,16 +78,4 @@
         that:
           - git_email_input.user_input is match('^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$')
         fail_msg: Invalid email format. Please use a valid email address.
-      when: needs_email_config
-
-    - name: Set Git user email
-      ansible.builtin.set_fact:
-        git_user_email: "{{ git_email_input.user_input }}"
-      when: needs_email_config
-
-    - name: Configure Git user email
-      community.general.git_config:
-        name: user.email
-        scope: global
-        value: "{{ git_user_email }}"
       when: needs_email_config

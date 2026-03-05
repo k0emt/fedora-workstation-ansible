@@ -27,7 +27,26 @@
   become: false
   block:
 
-    # global config of user.name and user.email are done in the pre_tasks
+    - name: Set Git username
+      community.general.git_config:
+        name: user.name
+        scope: global
+        value: "{{ git_username_prompt.user_input }}"
+      when:
+        - needs_setup
+        - git_username_prompt.user_input | length > 0
+
+    - name: Set Git user email
+      ansible.builtin.set_fact:
+        git_user_email: "{{ git_email_input.user_input }}"
+      when: needs_email_config
+
+    - name: Configure Git user email
+      community.general.git_config:
+        name: user.email
+        scope: global
+        value: "{{ git_user_email }}"
+      when: needs_email_config
 
     - name: Set default Git branch to main
       ansible.builtin.command: git config --global init.defaultBranch main
